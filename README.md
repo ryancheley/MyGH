@@ -2,7 +2,7 @@
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Built with uv](https://img.shields.io/badge/built%20with-uv-green)](https://github.com/astral-sh/uv)
-[![Test Coverage](https://img.shields.io/badge/coverage-97.35%25-brightgreen)](https://github.com/astral-sh/uv)
+[![Test Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen)](https://github.com/ryancheley/MyGH)
 [![Code Quality](https://img.shields.io/badge/code%20quality-A+-brightgreen)](https://github.com/astral-sh/ruff)
 
 MyGH is a modern, feature-rich command-line interface for GitHub that provides comprehensive user insights and repository management capabilities. Built with Python, Typer, and the GitHub REST API, it offers a beautiful and intuitive developer experience.
@@ -41,8 +41,8 @@ MyGH is a modern, feature-rich command-line interface for GitHub that provides c
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
-   cd mygh
+   git clone https://github.com/ryancheley/MyGH.git
+   cd MyGH
    ```
 
 2. **Install dependencies with uv:**
@@ -233,8 +233,8 @@ mygh/
 
 1. **Clone and setup:**
    ```bash
-   git clone <repository-url>
-   cd mygh
+   git clone https://github.com/ryancheley/MyGH.git
+   cd MyGH
    uv sync --dev
    ```
 
@@ -257,7 +257,7 @@ mygh/
 
 ### Running Tests
 
-MyGH includes a comprehensive test suite with **97.35% code coverage** that exceeds industry standards:
+MyGH includes a comprehensive test suite with **97% code coverage** that exceeds industry standards:
 
 ```bash
 # Run all tests
@@ -356,7 +356,7 @@ coverage: OK (5.85=setup[3.91]+cmd[1.94] seconds)
 
 ### Test Coverage Details
 
-The test suite achieves **97.35% coverage** across all components:
+The test suite achieves **97% coverage** across all components:
 
 | Component | Coverage | Focus Areas |
 |-----------|----------|-------------|
@@ -406,7 +406,7 @@ The project uses several tools to maintain code quality:
 
 - **Ruff**: Fast Python linter and formatter
 - **MyPy**: Static type checking
-- **Pytest**: Testing framework with 97.35% coverage
+- **Pytest**: Testing framework with 97% coverage
 - **pytest-cov**: Coverage reporting and enforcement
 - **pytest-asyncio**: Async testing support
 - **respx**: HTTP request mocking for reliable API tests
