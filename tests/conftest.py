@@ -16,8 +16,8 @@ from mygh.api.models import GitHubRepo, GitHubUser
 
 def strip_ansi_codes(text: str) -> str:
     """Strip ANSI escape codes from text."""
-    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-    return ansi_escape.sub('', text)
+    ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+    return ansi_escape.sub("", text)
 
 
 @pytest.fixture
