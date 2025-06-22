@@ -203,7 +203,7 @@ class TestUserCLI:
     def test_user_info_help(self, cli_runner):
         """Test user info help command."""
         from .conftest import strip_ansi_codes
-        
+
         result = cli_runner.invoke(app, ["user", "info", "--help"])
         clean_output = strip_ansi_codes(result.stdout)
 
