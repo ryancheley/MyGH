@@ -1,0 +1,165 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  test-before-release:
+    name: Pre-Release Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+    
+    - name: Install dependencies
+      run: uv sync --dev
+    
+    - name: Run full test suite
+      run: |
+        uv run pytest tests/ \
+          --cov=src/mygh \
+          --cov-report=term-missing \
+          --cov-fail-under=95
+    
+    - name: Run linting
+      run: |
+        uv run ruff check src tests
+        uv run ruff format --check src tests
+    
+    - name: Run type checking
+      run: uv run mypy src/mygh
+    
+    - name: Test CLI functionality
+      run: |
+        uv run mygh --help
+        uv run mygh config list
+
+  build-and-publish:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+    needs: test-before-release
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+    
+    - name: Install dependencies
+      run: uv sync --dev
+    
+    - name: Build package
+      run: uv build
+    
+    - name: Check package
+      run: |
+        uv add --dev twine
+        uv run twine check dist/*
+    
+    - name: Upload to Test PyPI
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        uv run twine upload --repository testpypi dist/*
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+    
+    - name: Upload to PyPI
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        uv run twine upload dist/*
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+    
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "dist/*"
+        token: ${{ secrets.GITHUB_TOKEN }}
+        generateReleaseNotes: true
+        body: |
+          ## What's Changed
+          
+          This release includes improvements to the MyGH CLI tool.
+          
+          ### Installation
+          
+          ```bash
+          pip install mygh
+          ```
+          
+          Or with uv:
+          
+          ```bash
+          uv add mygh
+          ```
+          
+          ### Verification
+          
+          Verify the installation:
+          
+          ```bash
+          mygh --version
+          mygh --help
+          ```
+          
+          **Full Changelog**: https://github.com/ryancheley/MyGH/compare/${{ github.event.before }}...${{ github.sha }}
+
+  test-published-package:
+    name: Test Published Package
+    runs-on: ubuntu-latest
+    needs: build-and-publish
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    
+    - name: Install published package
+      run: |
+        pip install mygh
+    
+    - name: Test installed package
+      run: |
+        mygh --version
+        mygh --help
+        mygh config list
+    
+    - name: Verify package functionality
+      run: |
+        python -c "import mygh; print('Package imported successfully')"
