@@ -14,7 +14,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        include:
+          - python-version: "3.14"
+            experimental: true
     
     steps:
     - name: Checkout code
@@ -34,7 +37,8 @@ jobs:
     - name: Install dependencies
       run: uv sync --dev
     
-    - name: Run tests with coverage
+    - name: Run tests with coverage (stable Python)
+      if: matrix.experimental != true
       run: |
         uv run pytest tests/ \
           --cov=src/mygh \
@@ -42,6 +46,18 @@ jobs:
           --cov-report=xml \
           --cov-fail-under=95 \
           --junitxml=pytest.xml
+    
+    - name: Run tests (experimental Python)
+      if: matrix.experimental == true
+      continue-on-error: true
+      run: |
+        echo "Testing Python ${{ matrix.python-version }} (experimental)"
+        uv run pytest tests/ \
+          --cov=src/mygh \
+          --cov-report=term-missing \
+          --cov-report=xml \
+          --cov-fail-under=95 \
+          --junitxml=pytest.xml || echo "Python ${{ matrix.python-version }} tests failed (expected for beta versions)"
     
     - name: Upload coverage to Codecov
       if: matrix.python-version == '3.11'
