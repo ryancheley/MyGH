@@ -1,6 +1,7 @@
 """Pytest configuration and fixtures."""
 
 import os
+import re
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -11,6 +12,12 @@ import pytest
 from typer.testing import CliRunner
 
 from mygh.api.models import GitHubRepo, GitHubUser
+
+
+def strip_ansi_codes(text: str) -> str:
+    """Strip ANSI escape codes from text."""
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return ansi_escape.sub('', text)
 
 
 @pytest.fixture

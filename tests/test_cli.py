@@ -202,13 +202,16 @@ class TestUserCLI:
 
     def test_user_info_help(self, cli_runner):
         """Test user info help command."""
+        from .conftest import strip_ansi_codes
+        
         result = cli_runner.invoke(app, ["user", "info", "--help"])
+        clean_output = strip_ansi_codes(result.stdout)
 
         assert result.exit_code == 0
-        assert "Get user information" in result.stdout
-        assert "username" in result.stdout
-        assert "--format" in result.stdout
-        assert "--output" in result.stdout
+        assert "Get user information" in clean_output
+        assert "username" in clean_output
+        assert "--format" in clean_output
+        assert "--output" in clean_output
 
     @patch("mygh.cli.user.GitHubClient")
     def test_user_info_command(
