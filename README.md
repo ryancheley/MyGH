@@ -541,14 +541,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🎯 Roadmap
 
-- [ ] Interactive repository browser
-- [ ] Repository creation and management
-- [ ] Pull request management
-- [ ] GitHub Actions integration
-- [ ] Organization management
-- [ ] Advanced search capabilities
-- [ ] Notification management
-- [ ] Team management features
+- [ ] [Interactive repository browser](https://github.com/ryancheley/MyGH/issues/1)
+- [ ] [Repository creation and management](https://github.com/ryancheley/MyGH/issues/2)
+- [ ] [Pull request management](https://github.com/ryancheley/MyGH/issues/3)
+- [ ] [GitHub Actions integration](https://github.com/ryancheley/MyGH/issues/4)
+- [ ] [Organization management](https://github.com/ryancheley/MyGH/issues/5)
+- [ ] [Advanced search capabilities](https://github.com/ryancheley/MyGH/issues/6)
+- [ ] [Notification management](https://github.com/ryancheley/MyGH/issues/7)
+- [ ] [Team management features](https://github.com/ryancheley/MyGH/issues/8)
 
 ---
 
