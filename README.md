@@ -18,6 +18,47 @@ MyGH is a modern, feature-rich command-line interface for GitHub that provides c
 - **Repository Listing**: List repositories with flexible filtering and sorting
 - **Repository Details**: Get comprehensive information about specific repositories
 - **Issue Tracking**: Browse repository issues with advanced filtering
+- **Repository Creation**: Create new repositories with full configuration options
+- **Repository Updates**: Modify repository settings, visibility, and features
+- **Repository Deletion**: Safely delete repositories with confirmation prompts
+- **Repository Forking**: Fork repositories to your account or organizations
+
+### 🔄 Pull Request Management
+- **PR Listing**: List and filter pull requests by state, branch, and author
+- **PR Creation**: Create pull requests with interactive prompts and draft support
+- **PR Updates**: Modify titles, descriptions, and other PR attributes
+- **PR Merging**: Merge pull requests with different strategies (merge, squash, rebase)
+- **PR Details**: View comprehensive PR information with diffs and statistics
+
+### 🚀 GitHub Actions Integration
+- **Workflow Listing**: Browse repository workflows and their configurations
+- **Workflow Runs**: Monitor workflow runs with status and conclusion filtering
+- **Real-time Status**: Track CI/CD pipeline execution and results
+
+### 🏢 Organization Management
+- **Organization Listing**: View your organization memberships
+- **Member Management**: List organization members with role filtering
+- **Team Overview**: Browse organization teams and their descriptions
+
+### 🔍 Advanced Search
+- **Repository Search**: Find repositories using GitHub's powerful search syntax
+- **User Search**: Discover users with advanced filtering and sorting
+- **Search Operators**: Support for all GitHub search qualifiers and operators
+
+### 🔔 Notification Management
+- **Notification Listing**: View unread and participating notifications
+- **Bulk Operations**: Mark notifications as read globally or per repository
+- **Filtering Options**: Focus on relevant notifications with various filters
+
+### 👥 Team Management
+- **Team Listing**: Browse organization teams with member counts
+- **Member Details**: View team membership and roles
+- **Team Privacy**: Support for public and private team visibility
+
+### 🖥️ Interactive Browser
+- **Repository Browser**: Navigate repositories with keyboard shortcuts
+- **Real-time Filtering**: Search and filter repositories interactively
+- **Detailed Views**: Inspect repository details without leaving the terminal
 
 ### 🎨 Output Formats
 - **Rich Tables**: Beautiful, colorized terminal output with commit age indicators (default)
@@ -158,6 +199,212 @@ uv run mygh repos issues facebook/react --labels "bug,help wanted"
 # Export issues as JSON
 uv run mygh repos issues vuejs/vue --format json --output issues.json
 ```
+
+### Repository Management (Extended)
+
+#### Create Repositories
+```bash
+# Create a new repository
+uv run mygh repos create my-new-repo --description "My awesome project"
+
+# Create with interactive prompts
+uv run mygh repos create my-repo --interactive
+
+# Create private repository with custom settings
+uv run mygh repos create my-private-repo --private --no-wiki --no-projects
+```
+
+#### Update Repository Settings
+```bash
+# Update repository description
+uv run mygh repos update myuser/my-repo --description "Updated description"
+
+# Change repository visibility
+uv run mygh repos update myuser/my-repo --private
+
+# Enable/disable features
+uv run mygh repos update myuser/my-repo --issues --no-wiki
+```
+
+#### Delete and Fork Repositories
+```bash
+# Delete a repository (with confirmation)
+uv run mygh repos delete myuser/old-repo
+
+# Fork a repository
+uv run mygh repos fork microsoft/vscode
+
+# Fork to an organization
+uv run mygh repos fork microsoft/vscode --org myorg
+```
+
+### Pull Request Management
+
+#### List Pull Requests
+```bash
+# List open pull requests
+uv run mygh pulls list microsoft/vscode
+
+# Filter by state and branch
+uv run mygh pulls list microsoft/vscode --state closed --base main
+
+# Sort by creation date
+uv run mygh pulls list microsoft/vscode --sort created --direction asc
+```
+
+#### Create Pull Requests
+```bash
+# Create a new pull request
+uv run mygh pulls create myuser/my-repo --title "Add new feature" --head feature-branch --base main
+
+# Create with interactive prompts
+uv run mygh pulls create myuser/my-repo --interactive
+
+# Create as draft
+uv run mygh pulls create myuser/my-repo --title "WIP: New feature" --head feature --draft
+```
+
+#### Manage Pull Requests
+```bash
+# Show pull request details
+uv run mygh pulls show microsoft/vscode 123
+
+# Show with diff
+uv run mygh pulls show microsoft/vscode 123 --diff
+
+# Update pull request
+uv run mygh pulls update microsoft/vscode 123 --title "Updated title" --body "New description"
+
+# Merge pull request
+uv run mygh pulls merge microsoft/vscode 123 --method squash --delete-branch
+
+# Close without merging
+uv run mygh pulls close microsoft/vscode 123
+```
+
+### GitHub Actions Integration
+
+#### List Workflows
+```bash
+# List repository workflows
+uv run mygh actions workflows microsoft/vscode
+
+# Export as JSON
+uv run mygh actions workflows microsoft/vscode --format json
+```
+
+#### Monitor Workflow Runs
+```bash
+# List recent workflow runs
+uv run mygh actions runs microsoft/vscode
+
+# Filter by workflow and status
+uv run mygh actions runs microsoft/vscode --workflow ci.yml --status failure
+
+# Limit results
+uv run mygh actions runs microsoft/vscode --limit 10
+```
+
+### Organization Management
+
+#### List Organizations
+```bash
+# List your organizations
+uv run mygh orgs list
+```
+
+#### Manage Organization Members
+```bash
+# List organization members
+uv run mygh orgs members myorg
+
+# Filter by role
+uv run mygh orgs members myorg --role admin
+```
+
+### Advanced Search
+
+#### Search Repositories
+```bash
+# Search repositories by keyword
+uv run mygh search repos "machine learning"
+
+# Search with filters and sorting
+uv run mygh search repos "language:python stars:>1000" --sort stars --order desc
+
+# Limit results
+uv run mygh search repos "react" --limit 10
+```
+
+#### Search Users
+```bash
+# Search users
+uv run mygh search users "location:London"
+
+# Sort by followers
+uv run mygh search users "repos:>50" --sort followers --order desc
+```
+
+### Notification Management
+
+#### List Notifications
+```bash
+# List unread notifications
+uv run mygh notifications list
+
+# Include read notifications
+uv run mygh notifications list --all
+
+# Show only participating notifications
+uv run mygh notifications list --participating
+```
+
+#### Mark as Read
+```bash
+# Mark all notifications as read
+uv run mygh notifications mark-read
+
+# Mark notifications for specific repository as read
+uv run mygh notifications mark-read --repo microsoft/vscode
+```
+
+### Team Management
+
+#### List Teams
+```bash
+# List organization teams
+uv run mygh teams list myorg
+```
+
+#### Manage Team Members
+```bash
+# List team members
+uv run mygh teams members myorg developers
+
+# Show team member details
+uv run mygh teams members myorg developers
+```
+
+### Interactive Repository Browser
+
+#### Launch Browser
+```bash
+# Browse your repositories interactively
+uv run mygh browse repos
+
+# Browse another user's repositories
+uv run mygh browse repos octocat
+```
+
+**Browser Controls:**
+- `j/down`: Move down
+- `k/up`: Move up  
+- `n/next`: Next page
+- `p/prev`: Previous page
+- `f/filter`: Filter repositories
+- `c/clear`: Clear filter
+- `enter`: View repository details
+- `q/quit`: Exit browser
 
 ### Configuration Management
 

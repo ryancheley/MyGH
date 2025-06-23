@@ -498,7 +498,7 @@ wheels = [
 
 [[package]]
 name = "mygh"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
@@ -520,6 +520,7 @@ dev = [
 [package.dependency-groups]
 dev = [
     { name = "mypy" },
+    { name = "packaging" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-cov" },
@@ -547,6 +548,7 @@ requires-dist = [
 [package.metadata.dependency-groups]
 dev = [
     { name = "mypy", specifier = ">=1.0.0" },
+    { name = "packaging", specifier = ">=23.0" },
     { name = "pytest", specifier = ">=7.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.21.0" },
     { name = "pytest-cov", specifier = ">=4.0.0" },

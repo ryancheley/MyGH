@@ -91,6 +91,52 @@ class GitHubIssue(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+class GitHubBranch(BaseModel):
+    """GitHub branch reference model."""
+
+    label: str
+    ref: str
+    sha: str
+    user: GitHubUser
+    repo: "GitHubRepo"
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GitHubPullRequest(BaseModel):
+    """GitHub pull request model."""
+
+    id: int
+    number: int
+    title: str
+    body: str | None = None
+    state: str
+    user: GitHubUser
+    assignee: GitHubUser | None = None
+    assignees: list[GitHubUser] = []
+    labels: list[dict[str, Any]] = []
+    head: GitHubBranch
+    base: GitHubBranch
+    draft: bool = False
+    merged: bool = False
+    mergeable: bool | None = None
+    merged_at: datetime | None = Field(alias="merged_at", default=None)
+    merged_by: GitHubUser | None = Field(alias="merged_by", default=None)
+    comments: int = 0
+    commits: int = 0
+    additions: int = 0
+    deletions: int = 0
+    changed_files: int = Field(alias="changed_files", default=0)
+    created_at: datetime = Field(alias="created_at")
+    updated_at: datetime = Field(alias="updated_at")
+    closed_at: datetime | None = Field(alias="closed_at", default=None)
+    html_url: str = Field(alias="html_url")
+    diff_url: str = Field(alias="diff_url")
+    patch_url: str = Field(alias="patch_url")
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 class RateLimit(BaseModel):
     """GitHub API rate limit information."""
 

@@ -7,7 +7,14 @@ from rich.console import Console
 
 from ..exceptions import APIError, AuthenticationError, MyGHException
 from ..utils.config import ConfigManager
+from .actions import actions_app
+from .browse import app as browse_app
+from .notifications import notifications_app
+from .orgs import orgs_app
+from .pulls import pulls_app
 from .repos import repos_app
+from .search import search_app
+from .teams import teams_app
 from .user import user_app
 
 console = Console()
@@ -20,6 +27,13 @@ app = typer.Typer(
 # Add sub-commands
 app.add_typer(user_app, name="user", help="User-related commands")
 app.add_typer(repos_app, name="repos", help="Repository management commands")
+app.add_typer(pulls_app, name="pulls", help="Pull request management commands")
+app.add_typer(actions_app, name="actions", help="GitHub Actions integration")
+app.add_typer(orgs_app, name="orgs", help="Organization management commands")
+app.add_typer(search_app, name="search", help="Advanced search capabilities")
+app.add_typer(notifications_app, name="notifications", help="Notification management")
+app.add_typer(teams_app, name="teams", help="Team management commands")
+app.add_typer(browse_app, name="browse", help="Interactive repository browser")
 
 # Global configuration manager
 config_manager = ConfigManager()
