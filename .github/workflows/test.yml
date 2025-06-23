@@ -23,22 +23,41 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.python-version }} (stable)
+      if: matrix.experimental != true
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     
+    - name: Set up Python ${{ matrix.python-version }} (experimental)
+      if: matrix.experimental == true
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+        check-latest: true
+      continue-on-error: true
+    
+    - name: Fallback - Skip experimental Python if not available
+      if: matrix.experimental == true && failure()
+      run: |
+        echo "Python ${{ matrix.python-version }} is not available in GitHub Actions yet"
+        echo "This job will be skipped until Python ${{ matrix.python-version }} becomes available"
+        exit 0
+    
     - name: Install uv
+      if: success()
       uses: astral-sh/setup-uv@v3
       with:
         enable-cache: true
         cache-dependency-glob: "uv.lock"
     
     - name: Install dependencies
+      if: success()
       run: uv sync --dev
     
     - name: Run tests with coverage (stable Python)
-      if: matrix.experimental != true
+      if: matrix.experimental != true && success()
       run: |
         uv run pytest tests/ \
           --cov=src/mygh \
@@ -48,7 +67,7 @@ jobs:
           --junitxml=pytest.xml
     
     - name: Run tests (experimental Python)
-      if: matrix.experimental == true
+      if: matrix.experimental == true && success()
       continue-on-error: true
       run: |
         echo "Testing Python ${{ matrix.python-version }} (experimental)"
