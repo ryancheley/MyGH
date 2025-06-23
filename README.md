@@ -411,6 +411,29 @@ The project uses several tools to maintain code quality:
 - **pytest-asyncio**: Async testing support
 - **respx**: HTTP request mocking for reliable API tests
 
+### Version Management
+
+MyGH includes an automated version bumping script that updates both `pyproject.toml` and creates git tags to trigger releases:
+
+```bash
+# Bump patch version (0.1.1 -> 0.1.2)
+uv run python bump-version.py patch
+
+# Bump minor version (0.1.1 -> 0.2.0)
+uv run python bump-version.py minor
+
+# Bump major version (0.1.1 -> 1.0.0)
+uv run python bump-version.py major
+```
+
+The script will:
+1. Update the version in `pyproject.toml`
+2. Create a git commit with the version change
+3. Create and push a git tag (e.g., `v0.1.2`)
+4. Automatically trigger the release workflow for PyPI publishing
+
+**Requirements**: The `packaging` library is included in development dependencies.
+
 ### Contributing
 
 1. Fork the repository
