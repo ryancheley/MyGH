@@ -485,24 +485,28 @@ class TestSearchCLI:
 
     def test_help_text_completeness_repos(self):
         """Test that repos search help text contains useful information."""
-        runner = CliRunner()
+        runner = CliRunner(env={"NO_COLOR": "1"})
         result = runner.invoke(app, ["search", "repos", "--help"])
 
         assert result.exit_code == 0
-        assert "--sort" in result.stdout
-        assert "--order" in result.stdout
-        assert "--limit" in result.stdout
-        assert "--format" in result.stdout
-        assert "--output" in result.stdout
+        # Check for key help text components
+        help_text = result.stdout
+        assert "--sort" in help_text
+        assert "--order" in help_text
+        assert "--limit" in help_text
+        assert "--format" in help_text
+        assert "--output" in help_text
 
     def test_help_text_completeness_users(self):
         """Test that users search help text contains useful information."""
-        runner = CliRunner()
+        runner = CliRunner(env={"NO_COLOR": "1"})
         result = runner.invoke(app, ["search", "users", "--help"])
 
         assert result.exit_code == 0
-        assert "--sort" in result.stdout
-        assert "--order" in result.stdout
-        assert "--limit" in result.stdout
-        assert "--format" in result.stdout
-        assert "--output" in result.stdout
+        # Check for key help text components
+        help_text = result.stdout
+        assert "--sort" in help_text
+        assert "--order" in help_text
+        assert "--limit" in help_text
+        assert "--format" in help_text
+        assert "--output" in help_text
