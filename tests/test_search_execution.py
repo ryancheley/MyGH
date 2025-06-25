@@ -47,7 +47,7 @@ class TestSearchExecution:
                 "events_url": "https://api.github.com/users/owner/events{/privacy}",
                 "received_events_url": "https://api.github.com/users/owner/received_events",
                 "type": "User",
-                "site_admin": False
+                "site_admin": False,
             },
             "html_url": "https://github.com/owner/test-repo",
             "description": "Test repository",
@@ -75,7 +75,7 @@ class TestSearchExecution:
             "open_issues": 2,
             "watchers": 3,
             "default_branch": "main",
-            "topics": ["python", "testing"]
+            "topics": ["python", "testing"],
         }
 
     @pytest.fixture
@@ -104,7 +104,7 @@ class TestSearchExecution:
             "company": "Test Company",
             "location": "Test Location",
             "followers": 10,
-            "public_repos": 5
+            "public_repos": 5,
         }
 
     @respx.mock
@@ -113,7 +113,7 @@ class TestSearchExecution:
         search_data = {
             "total_count": 1,
             "incomplete_results": False,
-            "items": [sample_repo_data]
+            "items": [sample_repo_data],
         }
 
         respx.get("https://api.github.com/search/repositories").mock(
@@ -135,7 +135,7 @@ class TestSearchExecution:
         search_data = {
             "total_count": 1,
             "incomplete_results": False,
-            "items": [sample_repo_data]
+            "items": [sample_repo_data],
         }
 
         respx.get("https://api.github.com/search/repositories").mock(
@@ -156,21 +156,22 @@ class TestSearchExecution:
         search_data = {
             "total_count": 1,
             "incomplete_results": False,
-            "items": [sample_repo_data]
+            "items": [sample_repo_data],
         }
 
         respx.get("https://api.github.com/search/repositories").mock(
             return_value=httpx.Response(200, json=search_data)
         )
 
-        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as f:
             output_file = f.name
 
         try:
             with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
-                result = runner.invoke(search_app, [
-                    "repos", "python", "--format", "json", "--output", output_file
-                ])
+                result = runner.invoke(
+                    search_app,
+                    ["repos", "python", "--format", "json", "--output", output_file],
+                )
 
             assert result.exit_code == 0
             assert "Results written to" in result.stdout
@@ -183,6 +184,7 @@ class TestSearchExecution:
                 assert '"incomplete_results": false' in content
         finally:
             import os
+
             try:
                 os.unlink(output_file)
             except FileNotFoundError:
@@ -194,7 +196,7 @@ class TestSearchExecution:
         search_data = {
             "total_count": 1,
             "incomplete_results": False,
-            "items": [sample_user_data]
+            "items": [sample_user_data],
         }
 
         respx.get("https://api.github.com/search/users").mock(
@@ -216,7 +218,7 @@ class TestSearchExecution:
         search_data = {
             "total_count": 1,
             "incomplete_results": False,
-            "items": [sample_user_data]
+            "items": [sample_user_data],
         }
 
         respx.get("https://api.github.com/search/users").mock(
@@ -237,21 +239,22 @@ class TestSearchExecution:
         search_data = {
             "total_count": 1,
             "incomplete_results": False,
-            "items": [sample_user_data]
+            "items": [sample_user_data],
         }
 
         respx.get("https://api.github.com/search/users").mock(
             return_value=httpx.Response(200, json=search_data)
         )
 
-        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as f:
             output_file = f.name
 
         try:
             with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
-                result = runner.invoke(search_app, [
-                    "users", "john", "--format", "json", "--output", output_file
-                ])
+                result = runner.invoke(
+                    search_app,
+                    ["users", "john", "--format", "json", "--output", output_file],
+                )
 
             assert result.exit_code == 0
             assert "Results written to" in result.stdout
@@ -264,6 +267,7 @@ class TestSearchExecution:
                 assert '"incomplete_results": false' in content
         finally:
             import os
+
             try:
                 os.unlink(output_file)
             except FileNotFoundError:
@@ -537,9 +541,7 @@ class TestSearchExecution:
 
         # Test invalid format for users
         with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
-            result = runner.invoke(
-                search_app, ["users", "john", "--format", "invalid"]
-            )
+            result = runner.invoke(search_app, ["users", "john", "--format", "invalid"])
 
         assert result.exit_code == 1
         assert "Invalid format: invalid" in result.stdout

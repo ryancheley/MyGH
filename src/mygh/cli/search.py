@@ -156,7 +156,7 @@ def search_repos(
                 output_data = {
                     "total_count": result.total_count,
                     "incomplete_results": result.incomplete_results,
-                    "items": [repo.model_dump() for repo in result.items]
+                    "items": [repo.model_dump() for repo in result.items],
                 }
 
                 if output:
@@ -267,7 +267,7 @@ def search_users(
                 output_data = {
                     "total_count": result.total_count,
                     "incomplete_results": result.incomplete_results,
-                    "items": [user.model_dump() for user in result.items]
+                    "items": [user.model_dump() for user in result.items],
                 }
 
                 if output:
