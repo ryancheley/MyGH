@@ -7,6 +7,11 @@ from rich.console import Console
 
 from ..exceptions import APIError, AuthenticationError, MyGHException
 from ..utils.config import ConfigManager
+from .actions import actions_app
+from .browse import app as browse_app
+from .notifications import notifications_app
+from .orgs import orgs_app
+from .pulls import pulls_app
 from .repos import repos_app
 from .search import search_app
 from .user import user_app

@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from ..api.models import GitHubGist, GitHubIssue, GitHubRepo, GitHubUser
+from ..api.models import GitHubGist, GitHubIssue, GitHubPullRequest, GitHubRepo, GitHubUser
 
 console = Console()
 
@@ -16,6 +16,23 @@ console = Console()
 def format_datetime(dt: datetime) -> str:
     """Format datetime for display."""
     return dt.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def format_date(dt: datetime) -> str:
+    """Format date for display (shorter format)."""
+    return dt.strftime("%Y-%m-%d")
+
+
+def format_size(size_bytes: int) -> str:
+    """Format file size in human readable format."""
+    if size_bytes < 1024:
+        return f"{size_bytes}B"
+    elif size_bytes < 1024 * 1024:
+        return f"{size_bytes / 1024:.1f}KB"
+    elif size_bytes < 1024 * 1024 * 1024:
+        return f"{size_bytes / (1024 * 1024):.1f}MB"
+    else:
+        return f"{size_bytes / (1024 * 1024 * 1024):.1f}GB"
 
 
 def calculate_days_since_commit(pushed_at: datetime | None) -> str:
@@ -206,6 +223,36 @@ def format_issue_table(issues: list[GitHubIssue]) -> Table:
     return table
 
 
+def format_pull_request_table(pulls: list[GitHubPullRequest]) -> Table:
+    """Format pull requests as a rich table."""
+    table = Table(title="GitHub Pull Requests")
+    table.add_column("Number", justify="right", style="cyan")
+    table.add_column("Title", style="white", max_width=50)
+    table.add_column("State", style="magenta")
+    table.add_column("Author", style="green")
+    table.add_column("Head → Base", style="yellow")
+    table.add_column("Created", style="blue")
+
+    for pr in pulls:
+        title = pr.title
+        if len(title) > 47:
+            title = title[:47] + "..."
+
+        state_color = "green" if pr.state == "open" else "red"
+        branch_info = f"{pr.head.ref} → {pr.base.ref}"
+
+        table.add_row(
+            str(pr.number),
+            title,
+            Text(pr.state.upper(), style=state_color),
+            pr.user.login,
+            branch_info,
+            format_datetime(pr.created_at),
+        )
+
+    return table
+
+
 def format_user_info(user: GitHubUser) -> None:
     """Format and display user information."""
     console.print(f"\n[bold cyan]{user.name or user.login}[/bold cyan] (@{user.login})")
@@ -333,6 +380,8 @@ def print_output(
                 table = format_gist_table(data)
             elif isinstance(data[0], GitHubIssue):
                 table = format_issue_table(data)
+            elif isinstance(data[0], GitHubPullRequest):
+                table = format_pull_request_table(data)
             elif isinstance(data[0], GitHubUser):
                 table = format_user_table(data)
             else:
