@@ -9,7 +9,15 @@ import httpx
 from pydantic import ValidationError
 
 from ..exceptions import APIError, AuthenticationError, RateLimitError
-from .models import GitHubGist, GitHubIssue, GitHubRepo, GitHubUser, RateLimit
+from .models import (
+    GitHubGist,
+    GitHubIssue,
+    GitHubRepo,
+    GitHubUser,
+    RateLimit,
+    RepoSearchResult,
+    UserSearchResult,
+)
 
 
 class GitHubClient:
@@ -292,6 +300,82 @@ class GitHubClient:
             )
         except (KeyError, ValidationError) as e:
             raise APIError(f"Invalid rate limit data: {e}") from e
+
+    async def search_repositories(
+        self,
+        query: str,
+        sort: str | None = None,
+        order: str | None = None,
+        per_page: int = 30,
+        page: int = 1,
+    ) -> RepoSearchResult:
+        """Search repositories using GitHub's search API.
+
+        Args:
+            query: Search query string
+            sort: Sort field (stars, forks, help-wanted-issues, updated)
+            order: Sort order (asc, desc)
+            per_page: Number of results per page (max 100)
+            page: Page number
+
+        Returns:
+            Repository search results
+        """
+        params = {
+            "q": query,
+            "per_page": min(per_page, 100),
+            "page": page,
+        }
+
+        if sort:
+            params["sort"] = sort
+        if order:
+            params["order"] = order
+
+        data = await self._request("GET", "/search/repositories", params=params)
+
+        try:
+            return RepoSearchResult(**data)
+        except ValidationError as e:
+            raise APIError(f"Invalid search result data: {e}") from e
+
+    async def search_users(
+        self,
+        query: str,
+        sort: str | None = None,
+        order: str | None = None,
+        per_page: int = 30,
+        page: int = 1,
+    ) -> UserSearchResult:
+        """Search users using GitHub's search API.
+
+        Args:
+            query: Search query string
+            sort: Sort field (followers, repositories, joined)
+            order: Sort order (asc, desc)
+            per_page: Number of results per page (max 100)
+            page: Page number
+
+        Returns:
+            User search results
+        """
+        params = {
+            "q": query,
+            "per_page": min(per_page, 100),
+            "page": page,
+        }
+
+        if sort:
+            params["sort"] = sort
+        if order:
+            params["order"] = order
+
+        data = await self._request("GET", "/search/users", params=params)
+
+        try:
+            return UserSearchResult(**data)
+        except ValidationError as e:
+            raise APIError(f"Invalid search result data: {e}") from e
 
     async def close(self) -> None:
         """Close the HTTP client."""

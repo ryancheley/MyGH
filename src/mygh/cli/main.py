@@ -8,6 +8,7 @@ from rich.console import Console
 from ..exceptions import APIError, AuthenticationError, MyGHException
 from ..utils.config import ConfigManager
 from .repos import repos_app
+from .search import search_app
 from .user import user_app
 
 console = Console()
@@ -20,6 +21,7 @@ app = typer.Typer(
 # Add sub-commands
 app.add_typer(user_app, name="user", help="User-related commands")
 app.add_typer(repos_app, name="repos", help="Repository management commands")
+app.add_typer(search_app, name="search", help="Advanced search capabilities")
 
 # Global configuration manager
 config_manager = ConfigManager()
