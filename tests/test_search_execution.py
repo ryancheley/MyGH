@@ -1,14 +1,13 @@
 """Tests for actual search command execution to improve coverage."""
 
 import tempfile
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, patch
 
+import httpx
 import pytest
 import respx
-import httpx
 from typer.testing import CliRunner
 
-from mygh.api.models import GitHubRepo, GitHubUser, RepoSearchResult, UserSearchResult
 from mygh.cli.search import search_app
 from mygh.exceptions import APIError, AuthenticationError, MyGHException
 
@@ -178,7 +177,7 @@ class TestSearchExecution:
             assert output_file in result.stdout
 
             # Verify file contents
-            with open(output_file, 'r') as f:
+            with open(output_file) as f:
                 content = f.read()
                 assert '"total_count": 1' in content
                 assert '"incomplete_results": false' in content
@@ -259,7 +258,7 @@ class TestSearchExecution:
             assert output_file in result.stdout
 
             # Verify file contents
-            with open(output_file, 'r') as f:
+            with open(output_file) as f:
                 content = f.read()
                 assert '"total_count": 1' in content
                 assert '"incomplete_results": false' in content
@@ -276,7 +275,9 @@ class TestSearchExecution:
             mock_client = AsyncMock()
             mock_client.__aenter__.return_value = mock_client
             mock_client.__aexit__.return_value = None
-            mock_client.search_repositories.side_effect = AuthenticationError("Invalid token")
+            mock_client.search_repositories.side_effect = AuthenticationError(
+                "Invalid token"
+            )
             mock_client_class.return_value = mock_client
 
             result = runner.invoke(search_app, ["repos", "python"])
@@ -417,6 +418,7 @@ class TestSearchExecution:
     def test_handle_exceptions_decorator_sync_function(self):
         """Test handle_exceptions decorator with sync function."""
         import typer
+
         from mygh.cli.search import handle_exceptions
 
         @handle_exceptions
@@ -429,6 +431,7 @@ class TestSearchExecution:
     def test_handle_exceptions_decorator_async_function(self):
         """Test handle_exceptions decorator with async function."""
         import typer
+
         from mygh.cli.search import handle_exceptions
 
         @handle_exceptions
@@ -441,6 +444,7 @@ class TestSearchExecution:
     def test_handle_exceptions_decorator_authentication_error(self):
         """Test handle_exceptions decorator with authentication error."""
         import typer
+
         from mygh.cli.search import handle_exceptions
 
         @handle_exceptions
@@ -453,6 +457,7 @@ class TestSearchExecution:
     def test_handle_exceptions_decorator_api_error(self):
         """Test handle_exceptions decorator with API error."""
         import typer
+
         from mygh.cli.search import handle_exceptions
 
         @handle_exceptions
@@ -465,6 +470,7 @@ class TestSearchExecution:
     def test_handle_exceptions_decorator_mygh_exception(self):
         """Test handle_exceptions decorator with MyGH exception."""
         import typer
+
         from mygh.cli.search import handle_exceptions
 
         @handle_exceptions
@@ -477,6 +483,7 @@ class TestSearchExecution:
     def test_handle_exceptions_decorator_keyboard_interrupt(self):
         """Test handle_exceptions decorator with keyboard interrupt."""
         import typer
+
         from mygh.cli.search import handle_exceptions
 
         @handle_exceptions
@@ -489,13 +496,18 @@ class TestSearchExecution:
     def test_validation_functions_coverage(self):
         """Test validation functions for coverage."""
         import typer
-        from mygh.cli.search import validate_repo_sort, validate_user_sort, validate_order
+
+        from mygh.cli.search import (
+            validate_order,
+            validate_repo_sort,
+            validate_user_sort,
+        )
 
         # Test repo sort validation
         with pytest.raises(typer.Exit):
             validate_repo_sort("invalid")
 
-        # Test user sort validation  
+        # Test user sort validation
         with pytest.raises(typer.Exit):
             validate_user_sort("invalid")
 
@@ -515,16 +527,20 @@ class TestSearchExecution:
         """Test format validation during execution."""
         # Test invalid format for repos
         with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
-            result = runner.invoke(search_app, ["repos", "python", "--format", "invalid"])
-        
+            result = runner.invoke(
+                search_app, ["repos", "python", "--format", "invalid"]
+            )
+
         assert result.exit_code == 1
         assert "Invalid format: invalid" in result.stdout
         assert "Available formats: table, json" in result.stdout
 
         # Test invalid format for users
         with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
-            result = runner.invoke(search_app, ["users", "john", "--format", "invalid"])
-        
+            result = runner.invoke(
+                search_app, ["users", "john", "--format", "invalid"]
+            )
+
         assert result.exit_code == 1
         assert "Invalid format: invalid" in result.stdout
         assert "Available formats: table, json" in result.stdout
