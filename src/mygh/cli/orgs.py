@@ -1,7 +1,6 @@
 """Organization management CLI commands."""
 
 import asyncio
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -49,7 +48,7 @@ async def list_orgs() -> None:
     client = GitHubClient(token=config.github_token)
     try:
         orgs = await client.get_user_organizations()
-        
+
         if not orgs:
             console.print("[yellow]No organizations found[/yellow]")
             return
@@ -76,7 +75,7 @@ async def list_orgs() -> None:
 @handle_exceptions  # type: ignore[misc]
 async def list_members(
     org_name: str = typer.Argument(help="Organization name"),
-    role: Optional[str] = typer.Option(None, "--role", help="Filter by role (admin, member)"),
+    role: str | None = typer.Option(None, "--role", help="Filter by role (admin, member)"),
 ) -> None:
     """List organization members."""
     config = config_manager.get_config()
@@ -84,7 +83,7 @@ async def list_members(
     client = GitHubClient(token=config.github_token)
     try:
         members = await client.get_organization_members(org_name, role)
-        
+
         if not members:
             console.print("[yellow]No members found[/yellow]")
             return

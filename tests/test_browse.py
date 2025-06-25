@@ -133,10 +133,10 @@ class TestInteractiveBrowser:
     async def test_load_repositories_success(self, mock_client, sample_repos):
         """Test successful repository loading."""
         mock_client.get_user_repos = asyncio.coroutine(Mock(return_value=sample_repos))
-        
+
         browser = InteractiveBrowser(mock_client)
         result = await browser.load_repositories()
-        
+
         assert result is True
         assert browser.repositories == sample_repos
 
@@ -144,10 +144,10 @@ class TestInteractiveBrowser:
     async def test_load_repositories_with_username(self, mock_client, sample_repos):
         """Test repository loading with username."""
         mock_client.get_user_repos.return_value = sample_repos
-        
+
         browser = InteractiveBrowser(mock_client)
         result = await browser.load_repositories("testuser")
-        
+
         assert result is True
         assert browser.repositories == sample_repos
         mock_client.get_user_repos.assert_called_once_with("testuser")
@@ -157,10 +157,10 @@ class TestInteractiveBrowser:
         """Test repository loading with error."""
         from mygh.exceptions import APIError
         mock_client.get_user_repos.side_effect = APIError("API Error")
-        
+
         browser = InteractiveBrowser(mock_client)
         result = await browser.load_repositories()
-        
+
         assert result is False
         assert browser.repositories == []
 
@@ -168,7 +168,7 @@ class TestInteractiveBrowser:
         """Test filtering with no filter text."""
         browser = InteractiveBrowser(mock_client)
         browser.repositories = sample_repos
-        
+
         filtered = browser.get_filtered_repos()
         assert filtered == sample_repos
 
@@ -177,7 +177,7 @@ class TestInteractiveBrowser:
         browser = InteractiveBrowser(mock_client)
         browser.repositories = sample_repos
         browser.filter_text = "python"
-        
+
         filtered = browser.get_filtered_repos()
         assert len(filtered) == 1
         assert filtered[0].name == "test-repo-1"
@@ -187,7 +187,7 @@ class TestInteractiveBrowser:
         browser = InteractiveBrowser(mock_client)
         browser.repositories = sample_repos
         browser.filter_text = "long description"
-        
+
         filtered = browser.get_filtered_repos()
         assert len(filtered) == 1
         assert filtered[0].name == "test-repo-2"
@@ -197,13 +197,13 @@ class TestInteractiveBrowser:
         browser = InteractiveBrowser(mock_client)
         browser.repositories = sample_repos
         browser.per_page = 1
-        
+
         # First page
         repos, total = browser.get_current_page_repos()
         assert len(repos) == 1
         assert total == 2
         assert repos[0].name == "test-repo-1"
-        
+
         # Second page
         browser.current_page = 1
         repos, total = browser.get_current_page_repos()
@@ -216,7 +216,7 @@ class TestInteractiveBrowser:
         browser = InteractiveBrowser(mock_client)
         browser.repositories = sample_repos
         browser.filter_text = "python"
-        
+
         repos, total = browser.get_current_page_repos()
         assert len(repos) == 1
         assert total == 1
@@ -226,9 +226,9 @@ class TestInteractiveBrowser:
     def test_display_repositories_empty(self, mock_console, mock_client):
         """Test displaying empty repository list."""
         browser = InteractiveBrowser(mock_client)
-        
+
         browser.display_repositories()
-        
+
         mock_console.clear.assert_called_once()
         mock_console.print.assert_called()
 
@@ -237,9 +237,9 @@ class TestInteractiveBrowser:
         """Test displaying repositories with data."""
         browser = InteractiveBrowser(mock_client)
         browser.repositories = sample_repos
-        
+
         browser.display_repositories()
-        
+
         mock_console.clear.assert_called_once()
         assert mock_console.print.call_count >= 3  # Panel, table, footer
 
@@ -270,15 +270,15 @@ class TestBrowseCLI:
         mock_config = Mock()
         mock_config.github_token = "fake_token"
         mock_get_config.return_value = mock_config
-        
+
         mock_client = Mock()
         mock_client.__aenter__ = Mock(return_value=mock_client)
         mock_client.__aexit__ = Mock(return_value=None)
         mock_client_class.return_value = mock_client
-        
+
         runner = CliRunner()
         result = runner.invoke(app, ["browse", "repos"])
-        
+
         assert result.exit_code == 0
         mock_get_config.assert_called_once()
         mock_client_class.assert_called_once_with("fake_token")
@@ -293,15 +293,15 @@ class TestBrowseCLI:
         mock_config = Mock()
         mock_config.github_token = "fake_token"
         mock_get_config.return_value = mock_config
-        
+
         mock_client = Mock()
         mock_client.__aenter__ = Mock(return_value=mock_client)
         mock_client.__aexit__ = Mock(return_value=None)
         mock_client_class.return_value = mock_client
-        
+
         runner = CliRunner()
         result = runner.invoke(app, ["browse", "repos", "testuser"])
-        
+
         assert result.exit_code == 0
         mock_get_config.assert_called_once()
         mock_client_class.assert_called_once_with("fake_token")
@@ -312,10 +312,10 @@ class TestBrowseCLI:
     def test_browse_repos_keyboard_interrupt(self, mock_asyncio_run, mock_console):
         """Test browse repos command with keyboard interrupt."""
         mock_asyncio_run.side_effect = KeyboardInterrupt()
-        
+
         runner = CliRunner()
         result = runner.invoke(app, ["browse", "repos"])
-        
+
         assert result.exit_code == 0
         mock_console.print.assert_called_with("\n[yellow]Browser closed.[/yellow]")
 
@@ -359,7 +359,7 @@ class TestRepoManagementCLI:
         mock_config = Mock()
         mock_config.github_token = "fake_token"
         mock_config_manager.get_config.return_value = mock_config
-        
+
         mock_client = Mock()
         mock_client.create_repo = Mock()
         mock_repo = Mock()
@@ -369,10 +369,10 @@ class TestRepoManagementCLI:
         mock_client.create_repo.return_value = mock_repo
         mock_client.close = Mock()
         mock_client_class.return_value = mock_client
-        
+
         runner = CliRunner()
         result = runner.invoke(app, ["repos", "create", "test-repo"])
-        
+
         assert result.exit_code == 0
         mock_client.create_repo.assert_called_once()
         mock_client.close.assert_called_once()
@@ -385,7 +385,7 @@ class TestRepoManagementCLI:
         mock_config = Mock()
         mock_config.github_token = "fake_token"
         mock_config_manager.get_config.return_value = mock_config
-        
+
         mock_client = Mock()
         mock_client.update_repo = Mock()
         mock_repo = Mock()
@@ -394,10 +394,10 @@ class TestRepoManagementCLI:
         mock_client.update_repo.return_value = mock_repo
         mock_client.close = Mock()
         mock_client_class.return_value = mock_client
-        
+
         runner = CliRunner()
         result = runner.invoke(app, ["repos", "update", "testowner/test-repo", "--description", "New description"])
-        
+
         assert result.exit_code == 0
         mock_client.update_repo.assert_called_once()
         mock_client.close.assert_called_once()
@@ -412,18 +412,18 @@ class TestRepoManagementCLI:
         mock_config = Mock()
         mock_config.github_token = "fake_token"
         mock_config_manager.get_config.return_value = mock_config
-        
+
         mock_client = Mock()
         mock_client.delete_repo = Mock()
         mock_client.close = Mock()
         mock_client_class.return_value = mock_client
-        
+
         mock_confirm.return_value = True
         mock_prompt.return_value = "testowner/test-repo"
-        
+
         runner = CliRunner()
         result = runner.invoke(app, ["repos", "delete", "testowner/test-repo"])
-        
+
         assert result.exit_code == 0
         mock_client.delete_repo.assert_called_once_with("testowner", "test-repo")
         mock_client.close.assert_called_once()
@@ -436,7 +436,7 @@ class TestRepoManagementCLI:
         mock_config = Mock()
         mock_config.github_token = "fake_token"
         mock_config_manager.get_config.return_value = mock_config
-        
+
         mock_client = Mock()
         mock_client.fork_repo = Mock()
         mock_repo = Mock()
@@ -445,10 +445,10 @@ class TestRepoManagementCLI:
         mock_client.fork_repo.return_value = mock_repo
         mock_client.close = Mock()
         mock_client_class.return_value = mock_client
-        
+
         runner = CliRunner()
         result = runner.invoke(app, ["repos", "fork", "testowner/test-repo"])
-        
+
         assert result.exit_code == 0
         mock_client.fork_repo.assert_called_once()
         mock_client.close.assert_called_once()

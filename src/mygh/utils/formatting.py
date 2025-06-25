@@ -8,7 +8,13 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from ..api.models import GitHubGist, GitHubIssue, GitHubPullRequest, GitHubRepo, GitHubUser
+from ..api.models import (
+    GitHubGist,
+    GitHubIssue,
+    GitHubPullRequest,
+    GitHubRepo,
+    GitHubUser,
+)
 
 console = Console()
 

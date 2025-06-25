@@ -1,14 +1,12 @@
 """Interactive repository browser CLI commands."""
 
 import asyncio
-from typing import Optional
 
 import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
-from rich.text import Text
 
 from ..api.client import GitHubClient
 from ..exceptions import APIError
@@ -21,7 +19,7 @@ console = Console()
 
 class InteractiveBrowser:
     """Interactive repository browser with keyboard navigation."""
-    
+
     def __init__(self, client: GitHubClient):
         self.client = client
         self.repositories = []
@@ -29,8 +27,8 @@ class InteractiveBrowser:
         self.per_page = 10
         self.selected_index = 0
         self.filter_text = ""
-        
-    async def load_repositories(self, username: Optional[str] = None):
+
+    async def load_repositories(self, username: str | None = None):
         """Load repositories for browsing."""
         try:
             if username:
@@ -41,42 +39,42 @@ class InteractiveBrowser:
             console.print(f"[red]Error loading repositories: {e}[/red]")
             return False
         return True
-    
+
     def get_filtered_repos(self):
         """Get repositories filtered by search text."""
         if not self.filter_text:
             return self.repositories
-        
+
         return [
             repo for repo in self.repositories
             if self.filter_text.lower() in repo.name.lower() or
                (repo.description and self.filter_text.lower() in repo.description.lower())
         ]
-    
+
     def get_current_page_repos(self):
         """Get repositories for current page."""
         filtered = self.get_filtered_repos()
         start = self.current_page * self.per_page
         end = start + self.per_page
         return filtered[start:end], len(filtered)
-    
+
     def display_repositories(self):
         """Display current page of repositories."""
         console.clear()
-        
+
         repos, total = self.get_current_page_repos()
-        
+
         # Header
-        title = f"📚 Repository Browser"
+        title = "📚 Repository Browser"
         if self.filter_text:
             title += f" (filtered: '{self.filter_text}')"
-        
+
         console.print(Panel(title, style="bold blue"))
-        
+
         if not repos:
             console.print("[yellow]No repositories found.[/yellow]")
             return
-        
+
         # Repository table
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("", width=2)  # Selection indicator
@@ -85,11 +83,11 @@ class InteractiveBrowser:
         table.add_column("Language", style="green")
         table.add_column("Stars", justify="right", style="yellow")
         table.add_column("Updated", style="blue")
-        
+
         for i, repo in enumerate(repos):
             indicator = "→" if i == self.selected_index else " "
             style = "bold" if i == self.selected_index else ""
-            
+
             table.add_row(
                 indicator,
                 repo.name,
@@ -99,32 +97,32 @@ class InteractiveBrowser:
                 format_date(repo.updated_at),
                 style=style
             )
-        
+
         console.print(table)
-        
+
         # Footer with navigation info
         page_info = f"Page {self.current_page + 1} • {total} total repositories"
         help_text = "↑↓: navigate • Enter: view details • f: filter • q: quit"
-        
+
         console.print(f"\n[dim]{page_info}[/dim]")
         console.print(f"[dim]{help_text}[/dim]")
-    
+
     async def show_repository_details(self, repo):
         """Show detailed information about a repository."""
         console.clear()
-        
+
         # Repository header
         title = f"📁 {repo.name}"
         if repo.private:
             title += " 🔒"
-        
+
         console.print(Panel(title, style="bold cyan"))
-        
+
         # Basic info
         info_table = Table(show_header=False, box=None)
         info_table.add_column("Field", style="bold")
         info_table.add_column("Value")
-        
+
         info_table.add_row("Description", repo.description or "No description")
         info_table.add_row("Language", repo.language or "N/A")
         info_table.add_row("Stars", str(repo.stargazers_count))
@@ -134,39 +132,39 @@ class InteractiveBrowser:
         info_table.add_row("Created", format_date(repo.created_at))
         info_table.add_row("Updated", format_date(repo.updated_at))
         info_table.add_row("Clone URL", repo.clone_url)
-        
+
         if repo.homepage:
             info_table.add_row("Homepage", repo.homepage)
-        
+
         console.print(info_table)
-        
+
         # Topics
         if repo.topics:
             console.print(f"\n[bold]Topics:[/bold] {', '.join(repo.topics)}")
-        
+
         # Actions
         console.print("\n[dim]Press any key to return to browser...[/dim]")
         input()
-    
-    async def run(self, username: Optional[str] = None):
+
+    async def run(self, username: str | None = None):
         """Run the interactive browser."""
         if not await self.load_repositories(username):
             return
-        
+
         while True:
             self.display_repositories()
-            
+
             # Get user input
             try:
                 key = console.input("\n> ").strip().lower()
             except (KeyboardInterrupt, EOFError):
                 break
-            
+
             repos, total = self.get_current_page_repos()
-            
+
             if not repos:
                 continue
-                
+
             if key == "q" or key == "quit":
                 break
             elif key == "f" or key == "filter":
@@ -205,7 +203,7 @@ class InteractiveBrowser:
 
 @app.command()
 def repos(
-    username: Optional[str] = typer.Argument(None, help="Username to browse repositories for")
+    username: str | None = typer.Argument(None, help="Username to browse repositories for")
 ):
     """Launch interactive repository browser."""
     async def _browse():
@@ -214,7 +212,7 @@ def repos(
         async with GitHubClient(config.github_token) as client:
             browser = InteractiveBrowser(client)
             await browser.run(username)
-    
+
     try:
         asyncio.run(_browse())
     except KeyboardInterrupt:

@@ -1,7 +1,6 @@
 """Pull request management CLI commands."""
 
 import asyncio
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -56,8 +55,8 @@ async def list_pulls(
     state: str = typer.Option(
         "open", "--state", "-s", help="Pull request state (open, closed, all)"
     ),
-    base: Optional[str] = typer.Option(None, "--base", help="Filter by base branch"),
-    head: Optional[str] = typer.Option(None, "--head", help="Filter by head branch"),
+    base: str | None = typer.Option(None, "--base", help="Filter by base branch"),
+    head: str | None = typer.Option(None, "--head", help="Filter by head branch"),
     sort: str = typer.Option(
         "created", "--sort", help="Sort order (created, updated, popularity)"
     ),
@@ -68,7 +67,7 @@ async def list_pulls(
     format_type: str = typer.Option(
         "table", "--format", "-f", help="Output format (table, json)"
     ),
-    output: Optional[str] = typer.Option(None, "--output", "-o", help="Output file path"),
+    output: str | None = typer.Option(None, "--output", "-o", help="Output file path"),
 ) -> None:
     """List pull requests."""
     if "/" not in repo_name:
@@ -126,7 +125,7 @@ async def create_pull(
     title: str = typer.Option(..., "--title", "-t", help="Pull request title"),
     head: str = typer.Option(..., "--head", help="Head branch (source)"),
     base: str = typer.Option("main", "--base", help="Base branch (target)"),
-    body: Optional[str] = typer.Option(None, "--body", "-b", help="Pull request body"),
+    body: str | None = typer.Option(None, "--body", "-b", help="Pull request body"),
     draft: bool = typer.Option(False, "--draft", help="Create as draft"),
     maintainer_can_modify: bool = typer.Option(
         True, "--maintainer-modify/--no-maintainer-modify", help="Allow maintainer modifications"
@@ -144,13 +143,13 @@ async def create_pull(
     # Interactive mode
     if interactive:
         console.print("[bold cyan]🚀 Interactive Pull Request Creation[/bold cyan]\n")
-        
+
         title = Prompt.ask("Pull request title", default=title)
         head = Prompt.ask("Head branch (source)", default=head)
         base = Prompt.ask("Base branch (target)", default=base)
         body = Prompt.ask("Pull request body (optional)", default=body or "")
         draft = Confirm.ask("Create as draft?", default=draft)
-        
+
         console.print(f"\n[yellow]Creating pull request '{title}'...[/yellow]")
 
     client = GitHubClient(token=config.github_token)
@@ -179,10 +178,10 @@ async def create_pull(
 async def update_pull(
     repo_name: str = typer.Argument(help="Repository name (owner/repo format)"),
     pr_number: int = typer.Argument(help="Pull request number"),
-    title: Optional[str] = typer.Option(None, "--title", "-t", help="Update title"),
-    body: Optional[str] = typer.Option(None, "--body", "-b", help="Update body"),
-    state: Optional[str] = typer.Option(None, "--state", help="Update state (open, closed)"),
-    base: Optional[str] = typer.Option(None, "--base", help="Update base branch"),
+    title: str | None = typer.Option(None, "--title", "-t", help="Update title"),
+    body: str | None = typer.Option(None, "--body", "-b", help="Update body"),
+    state: str | None = typer.Option(None, "--state", help="Update state (open, closed)"),
+    base: str | None = typer.Option(None, "--base", help="Update base branch"),
 ) -> None:
     """Update a pull request."""
     if "/" not in repo_name:
@@ -223,8 +222,8 @@ async def update_pull(
 async def merge_pull(
     repo_name: str = typer.Argument(help="Repository name (owner/repo format)"),
     pr_number: int = typer.Argument(help="Pull request number"),
-    commit_title: Optional[str] = typer.Option(None, "--title", help="Merge commit title"),
-    commit_message: Optional[str] = typer.Option(None, "--message", help="Merge commit message"),
+    commit_title: str | None = typer.Option(None, "--title", help="Merge commit title"),
+    commit_message: str | None = typer.Option(None, "--message", help="Merge commit message"),
     merge_method: str = typer.Option(
         "merge", "--method", help="Merge method (merge, squash, rebase)"
     ),
@@ -338,7 +337,7 @@ async def show_pull(
             # Custom display for PR details
             console.print(f"\n[bold cyan]Pull Request #{pr.number}[/bold cyan]")
             console.print(f"[bold]{pr.title}[/bold]")
-            
+
             if pr.body:
                 console.print(f"\n{pr.body}")
 
@@ -354,10 +353,10 @@ async def show_pull(
             info_table.add_row("Base", f"{pr.base.label} ({pr.base.sha[:8]})")
             info_table.add_row("Created", format_datetime(pr.created_at))
             info_table.add_row("Updated", format_datetime(pr.updated_at))
-            
+
             if pr.merged_at:
                 info_table.add_row("Merged", format_datetime(pr.merged_at))
-            
+
             info_table.add_row("Mergeable", "Yes" if pr.mergeable else "No")
             info_table.add_row("Comments", str(pr.comments))
             info_table.add_row("Commits", str(pr.commits))

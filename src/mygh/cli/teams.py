@@ -1,7 +1,6 @@
 """Team management CLI commands."""
 
 import asyncio
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -51,7 +50,7 @@ async def list_teams(
     client = GitHubClient(token=config.github_token)
     try:
         teams = await client.get_organization_teams(org_name)
-        
+
         if not teams:
             console.print("[yellow]No teams found[/yellow]")
             return
@@ -66,7 +65,7 @@ async def list_teams(
             description = team.get("description", "") or ""
             if len(description) > 47:
                 description = description[:47] + "..."
-                
+
             table.add_row(
                 team.get("name", "N/A"),
                 description,
@@ -92,7 +91,7 @@ async def list_team_members(
     client = GitHubClient(token=config.github_token)
     try:
         members = await client.get_team_members(org_name, team_slug)
-        
+
         if not members:
             console.print("[yellow]No team members found[/yellow]")
             return

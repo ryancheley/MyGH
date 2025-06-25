@@ -1,7 +1,6 @@
 """Notification management CLI commands."""
 
 import asyncio
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -53,7 +52,7 @@ async def list_notifications(
     client = GitHubClient(token=config.github_token)
     try:
         notifications = await client.get_notifications(all_notifications, participating, limit)
-        
+
         if not notifications:
             console.print("[yellow]No notifications found[/yellow]")
             return
@@ -68,7 +67,7 @@ async def list_notifications(
             subject_title = notification.get("subject", {}).get("title", "N/A")
             if len(subject_title) > 47:
                 subject_title = subject_title[:47] + "..."
-                
+
             table.add_row(
                 notification.get("repository", {}).get("full_name", "N/A"),
                 subject_title,
@@ -85,7 +84,7 @@ async def list_notifications(
 @notifications_app.command("mark-read")
 @handle_exceptions  # type: ignore[misc]
 async def mark_read(
-    repo_name: Optional[str] = typer.Option(None, "--repo", help="Repository (owner/repo format)"),
+    repo_name: str | None = typer.Option(None, "--repo", help="Repository (owner/repo format)"),
 ) -> None:
     """Mark notifications as read."""
     config = config_manager.get_config()

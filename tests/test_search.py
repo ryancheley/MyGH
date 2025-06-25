@@ -432,7 +432,7 @@ class TestSearchCLI:
     def test_help_text_completeness_repos(self):
         """Test that repos search help text contains useful information."""
         import re
-        
+
         runner = CliRunner(env={"NO_COLOR": "1"})
         result = runner.invoke(app, ["search", "repos", "--help"])
 
@@ -440,7 +440,7 @@ class TestSearchCLI:
         # Strip ANSI escape codes for robust testing
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         clean_text = ansi_escape.sub('', result.stdout)
-        
+
         assert "--sort" in clean_text
         assert "--order" in clean_text
         assert "--limit" in clean_text
@@ -450,7 +450,7 @@ class TestSearchCLI:
     def test_help_text_completeness_users(self):
         """Test that users search help text contains useful information."""
         import re
-        
+
         runner = CliRunner(env={"NO_COLOR": "1"})
         result = runner.invoke(app, ["search", "users", "--help"])
 
@@ -458,7 +458,7 @@ class TestSearchCLI:
         # Strip ANSI escape codes for robust testing
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         clean_text = ansi_escape.sub('', result.stdout)
-        
+
         assert "--sort" in clean_text
         assert "--order" in clean_text
         assert "--limit" in clean_text

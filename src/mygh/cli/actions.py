@@ -1,7 +1,6 @@
 """GitHub Actions integration CLI commands."""
 
 import asyncio
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -10,7 +9,6 @@ from rich.table import Table
 from ..api.client import GitHubClient
 from ..exceptions import APIError, AuthenticationError, MyGHException
 from ..utils.config import ConfigManager
-from ..utils.formatting import format_datetime
 
 console = Console()
 actions_app = typer.Typer(help="GitHub Actions integration commands")
@@ -58,7 +56,7 @@ async def list_workflows(
     client = GitHubClient(token=config.github_token)
     try:
         workflows = await client.get_workflows(owner, repo)
-        
+
         if not workflows:
             console.print("[yellow]No workflows found[/yellow]")
             return
@@ -91,8 +89,8 @@ async def list_workflows(
 @handle_exceptions  # type: ignore[misc]
 async def list_runs(
     repo_name: str = typer.Argument(help="Repository name (owner/repo format)"),
-    workflow_id: Optional[str] = typer.Option(None, "--workflow", help="Filter by workflow ID"),
-    status: Optional[str] = typer.Option(None, "--status", help="Filter by status"),
+    workflow_id: str | None = typer.Option(None, "--workflow", help="Filter by workflow ID"),
+    status: str | None = typer.Option(None, "--status", help="Filter by status"),
     limit: int = typer.Option(20, "--limit", help="Maximum number of runs"),
 ) -> None:
     """List workflow runs."""
@@ -106,7 +104,7 @@ async def list_runs(
     client = GitHubClient(token=config.github_token)
     try:
         runs = await client.get_workflow_runs(owner, repo, workflow_id, status, limit)
-        
+
         if not runs:
             console.print("[yellow]No workflow runs found[/yellow]")
             return
@@ -122,7 +120,7 @@ async def list_runs(
         for run in runs:
             status_color = "green" if run.get("status") == "completed" else "yellow"
             conclusion_color = "green" if run.get("conclusion") == "success" else "red"
-            
+
             table.add_row(
                 str(run.get("id", "N/A")),
                 run.get("name", "N/A"),
