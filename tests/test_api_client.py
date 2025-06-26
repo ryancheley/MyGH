@@ -281,12 +281,28 @@ class TestGitHubClient:
     async def test_get_user_gists(self, mock_github_token, sample_gist_data):
         """Test getting user gists."""
         gists_data = [sample_gist_data]
-        respx.get("https://api.github.com/user/gists").mock(
+        respx.get("https://api.github.com/gists").mock(
             return_value=httpx.Response(200, json=gists_data)
         )
 
         client = GitHubClient()
         gists = await client.get_user_gists()
+
+        assert len(gists) == 1
+        assert isinstance(gists[0], GitHubGist)
+        assert gists[0].id == "abc123"
+
+    @pytest.mark.asyncio
+    @respx.mock
+    async def test_get_user_gists_with_username(self, mock_github_token, sample_gist_data):
+        """Test getting gists for a specific user."""
+        gists_data = [sample_gist_data]
+        respx.get("https://api.github.com/users/testuser/gists").mock(
+            return_value=httpx.Response(200, json=gists_data)
+        )
+
+        client = GitHubClient()
+        gists = await client.get_user_gists(username="testuser")
 
         assert len(gists) == 1
         assert isinstance(gists[0], GitHubGist)

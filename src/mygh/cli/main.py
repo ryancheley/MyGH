@@ -5,6 +5,7 @@ import asyncio
 import typer
 from rich.console import Console
 
+from .. import __version__
 from ..exceptions import APIError, AuthenticationError, MyGHException
 from ..utils.config import ConfigManager
 from .repos import repos_app
@@ -12,11 +13,36 @@ from .search import search_app
 from .user import user_app
 
 console = Console()
+
+
+def version_callback(value: bool) -> None:
+    """Show version and exit."""
+    if value:
+        console.print(f"mygh version {__version__}")
+        raise typer.Exit()
+
+
 app = typer.Typer(
     name="mygh",
     help="A comprehensive GitHub CLI tool",
     rich_markup_mode="rich",
 )
+
+
+# Add version callback
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-v",
+        callback=version_callback,
+        help="Show version and exit",
+    ),
+) -> None:
+    """A comprehensive GitHub CLI tool."""
+    pass
+
 
 # Add sub-commands
 app.add_typer(user_app, name="user", help="User-related commands")
@@ -67,21 +93,6 @@ def config(
     except ValueError as e:
         console.print(f"[red]Configuration error: {e}[/red]")
         raise typer.Exit(1) from None
-
-
-@app.callback()
-def main(
-    ctx: typer.Context,
-    version: bool | None = typer.Option(
-        None, "--version", "-v", help="Show version and exit"
-    ),
-) -> None:
-    """MyGH - A comprehensive GitHub CLI tool."""
-    if version:
-        from .. import __version__
-
-        console.print(f"mygh version {__version__}")
-        raise typer.Exit()
 
 
 def handle_exceptions(func):  # type: ignore[no-untyped-def]

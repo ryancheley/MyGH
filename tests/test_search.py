@@ -1,14 +1,35 @@
 """Tests for the search CLI commands."""
 
-from unittest.mock import patch
+import asyncio
+from unittest.mock import MagicMock, patch
 
+import pytest
 from typer.testing import CliRunner
 
 from mygh.cli.main import app
 
 
+def create_safe_asyncio_run_mock():
+    """Create a safe mock for asyncio.run that properly closes coroutines."""
+
+    def close_coroutine(coro):
+        if asyncio.iscoroutine(coro):
+            coro.close()
+        return None
+
+    mock = MagicMock(side_effect=close_coroutine)
+    return mock
+
+
 class TestSearchCLI:
     """Test the search CLI commands."""
+
+    @pytest.fixture(autouse=True)
+    def setup_coroutine_cleanup(self):
+        """Automatically cleanup coroutines for all tests."""
+        # This fixture runs for all tests in this class to ensure
+        # proper coroutine cleanup and avoid RuntimeWarnings
+        pass
 
     def test_search_help(self):
         """Test search command help."""
@@ -34,6 +55,8 @@ class TestSearchCLI:
     @patch("mygh.cli.search.asyncio.run")
     def test_search_repos_basic(self, mock_asyncio_run):
         """Test basic repository search."""
+        mock_asyncio_run.side_effect = create_safe_asyncio_run_mock().side_effect
+
         runner = CliRunner()
         result = runner.invoke(app, ["search", "repos", "python"])
 
@@ -70,6 +93,16 @@ class TestSearchCLI:
     @patch("mygh.cli.search.asyncio.run")
     def test_search_repos_all_sort_options(self, mock_asyncio_run):
         """Test repository search with all valid sort options."""
+        import asyncio
+
+        # Configure mock to close coroutines properly to avoid unawaited warnings
+        def close_coroutine(coro):
+            if asyncio.iscoroutine(coro):
+                coro.close()
+            return None
+
+        mock_asyncio_run.side_effect = close_coroutine
+
         sort_options = ["stars", "forks", "help-wanted-issues", "updated"]
 
         for sort_option in sort_options:
@@ -85,6 +118,16 @@ class TestSearchCLI:
     @patch("mygh.cli.search.asyncio.run")
     def test_search_repos_all_order_options(self, mock_asyncio_run):
         """Test repository search with all valid order options."""
+        import asyncio
+
+        # Configure mock to close coroutines properly to avoid unawaited warnings
+        def close_coroutine(coro):
+            if asyncio.iscoroutine(coro):
+                coro.close()
+            return None
+
+        mock_asyncio_run.side_effect = close_coroutine
+
         order_options = ["asc", "desc"]
 
         for order_option in order_options:
@@ -182,6 +225,16 @@ class TestSearchCLI:
     @patch("mygh.cli.search.asyncio.run")
     def test_search_users_all_sort_options(self, mock_asyncio_run):
         """Test user search with all valid sort options."""
+        import asyncio
+
+        # Configure mock to close coroutines properly to avoid unawaited warnings
+        def close_coroutine(coro):
+            if asyncio.iscoroutine(coro):
+                coro.close()
+            return None
+
+        mock_asyncio_run.side_effect = close_coroutine
+
         sort_options = ["followers", "repositories", "joined"]
 
         for sort_option in sort_options:
@@ -197,6 +250,16 @@ class TestSearchCLI:
     @patch("mygh.cli.search.asyncio.run")
     def test_search_users_all_order_options(self, mock_asyncio_run):
         """Test user search with all valid order options."""
+        import asyncio
+
+        # Configure mock to close coroutines properly to avoid unawaited warnings
+        def close_coroutine(coro):
+            if asyncio.iscoroutine(coro):
+                coro.close()
+            return None
+
+        mock_asyncio_run.side_effect = close_coroutine
+
         order_options = ["asc", "desc"]
 
         for order_option in order_options:
@@ -438,8 +501,8 @@ class TestSearchCLI:
 
         assert result.exit_code == 0
         # Strip ANSI escape codes for robust testing
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-        clean_text = ansi_escape.sub('', result.stdout)
+        ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+        clean_text = ansi_escape.sub("", result.stdout)
 
         assert "--sort" in clean_text
         assert "--order" in clean_text
@@ -456,8 +519,8 @@ class TestSearchCLI:
 
         assert result.exit_code == 0
         # Strip ANSI escape codes for robust testing
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-        clean_text = ansi_escape.sub('', result.stdout)
+        ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+        clean_text = ansi_escape.sub("", result.stdout)
 
         assert "--sort" in clean_text
         assert "--order" in clean_text

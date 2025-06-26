@@ -29,9 +29,14 @@ uv run mygh --help
 ```
 
 ### Testing
+
+The use of mocks should only be done sparingly, and only when an external API call is made. This mocks should be marked as such with a customer pytest mark of pytest.mark.api_mock
+
+Testing coverage should never be less than 90%. 
+
 ```bash
 # Run all tests with coverage (requires 95%+ coverage)
-uv run pytest --cov=src/mygh --cov-fail-under=95
+uv run pytest --cov=src/mygh --cov-fail-under=95 -W error
 
 # Run specific test file
 uv run pytest tests/test_api_client.py
@@ -82,6 +87,8 @@ uv run ruff check --fix src tests
 ### Git Branching
 
 All new features must be done on their own branch. The name of the branch should be feature/issue-title-issue-number. For example, if the issue title was `Feature: Advanced search capabilities #6` the branch created would be `feature/feature-advanced-search-capabilities-6`
+
+Before pushing any code to GitHub all of the tests must pass locally using `uv run tox`
 
 ### Building and Publishing
 ```bash

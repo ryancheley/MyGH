@@ -229,7 +229,7 @@ class GitHubClient:
         Returns:
             List of gists
         """
-        endpoint = f"/users/{username}/gists" if username else "/user/gists"
+        endpoint = f"/users/{username}/gists" if username else "/gists"
         params = {"per_page": min(per_page, 100), "page": page}
 
         data = await self._request("GET", endpoint, params=params)

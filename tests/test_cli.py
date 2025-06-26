@@ -27,12 +27,12 @@ class TestMainCLI:
         import typer
 
         from mygh import __version__
-        from mygh.cli.main import main
+        from mygh.cli.main import version_callback
 
-        # Test version flag logic - just pass None for context since it's not used
+        # Test version callback logic
         with patch("mygh.cli.main.console") as mock_console:
             with pytest.raises(typer.Exit):
-                main(None, version=True)
+                version_callback(True)
 
             # Check that version was printed
             mock_console.print.assert_called_once_with(f"mygh version {__version__}")

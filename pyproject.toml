@@ -112,6 +112,9 @@ python_functions = ["test_*"]
 addopts = "--strict-markers --cov=mygh --cov-report=term-missing --cov-report=html --cov-fail-under=95"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "api_mock: marks tests that mock external API calls"
+]
 
 
 [tool.coverage.run]
