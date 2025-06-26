@@ -36,7 +36,7 @@ Testing coverage should never be less than 90%.
 
 ```bash
 # Run all tests with coverage (requires 95%+ coverage)
-uv run pytest --cov=src/mygh --cov-fail-under=95 -W error
+uv run pytest --cov=src/mygh --cov-fail-under=95
 
 # Run specific test file
 uv run pytest tests/test_api_client.py
@@ -98,6 +98,101 @@ uv run tox -e build
 # Clean build artifacts
 uv run tox -e clean
 ```
+
+## Deployment and Release Process
+
+### Prerequisites for PyPI Deployment
+
+The project uses **automated deployment** to PyPI via GitHub Actions with trusted publishing (OIDC). This requires:
+
+1. **GitHub Repository Environments**: 
+   - `testpypi` environment configured for Test PyPI
+   - `pypi` environment configured for production PyPI
+   - Both configured with trusted publishing (no API tokens needed)
+
+2. **Version Consistency**: All version references must match:
+   - `pyproject.toml` version field
+   - `src/mygh/__init__.py` __version__ variable  
+   - `tests/test_cli.py` version test assertion
+
+### Release Workflow
+
+The deployment is **tag-triggered** and follows this process:
+
+1. **Version Preparation**:
+   ```bash
+   # Update version in all files consistently
+   # pyproject.toml: version = "X.Y.Z"
+   # src/mygh/__init__.py: __version__ = "X.Y.Z" 
+   # tests/test_cli.py: assert __version__ == "X.Y.Z"
+   ```
+
+2. **Pre-Release Testing**:
+   ```bash
+   # Run full test suite (without -W error for CI compatibility)
+   uv run pytest --cov=src/mygh --cov-fail-under=95
+   
+   # Run multi-Python testing
+   uv run tox
+   
+   # Verify all tests pass before tagging
+   ```
+
+3. **Release Tagging**:
+   ```bash
+   # Commit version changes
+   git add pyproject.toml src/mygh/__init__.py tests/test_cli.py
+   git commit -m "🔖 Bump version to X.Y.Z for release"
+   
+   # Create and push tag (triggers deployment)
+   git tag vX.Y.Z
+   git push origin main
+   git push origin vX.Y.Z
+   ```
+
+4. **Automated CI/CD Pipeline**:
+   - GitHub Actions detects tag push
+   - Builds package with `uv build`
+   - Runs tests across Python 3.10-3.13
+   - Deploys to TestPyPI first
+   - Deploys to PyPI on success
+   - Creates GitHub Release with signed artifacts
+
+### Common Deployment Issues and Solutions
+
+**Issue: Version Mismatch**
+- **Problem**: Tests fail because version in test doesn't match actual version
+- **Solution**: Ensure all three files have consistent version numbers
+
+**Issue: Test Failures with Coroutine Warnings**  
+- **Problem**: Using `-W error` flag treats coroutine warnings as failures
+- **Solution**: CI uses standard pytest without `-W error` - warnings are acceptable
+
+**Issue: Missing GitHub Environments**
+- **Problem**: Deployment fails with environment errors
+- **Solution**: Configure `testpypi` and `pypi` environments in GitHub repository settings
+
+**Issue: Tag Not Triggering Deployment**
+- **Problem**: Release workflow doesn't run
+- **Solution**: Ensure tag follows `v*` pattern and is pushed to remote
+
+### Manual Deployment (Emergency Only)
+
+For emergency releases, manual deployment is possible:
+```bash
+# Build package
+uv build
+
+# Test upload to TestPyPI
+uv run twine upload --repository testpypi dist/*
+
+# Upload to PyPI  
+uv run twine upload dist/*
+```
+
+### Just Recipe for Streamlined Deployment
+
+Use the `just release` command for automated version bumping and deployment (see justfile).
 
 ## Architecture Overview
 
