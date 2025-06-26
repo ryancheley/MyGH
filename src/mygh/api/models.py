@@ -144,3 +144,24 @@ class RateLimit(BaseModel):
     remaining: int
     reset: datetime
     used: int
+
+
+class SearchResult(BaseModel):
+    """Base model for search results."""
+
+    total_count: int = Field(alias="total_count")
+    incomplete_results: bool = Field(alias="incomplete_results")
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class RepoSearchResult(SearchResult):
+    """Repository search result model."""
+
+    items: list[GitHubRepo]
+
+
+class UserSearchResult(SearchResult):
+    """User search result model."""
+
+    items: list[GitHubUser]

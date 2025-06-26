@@ -49,12 +49,8 @@ def handle_exceptions(func):  # type: ignore[no-untyped-def]
 @user_app.command("info")
 @handle_exceptions  # type: ignore[misc]
 async def user_info(
-    username: str | None = typer.Argument(
-        None, help="GitHub username (defaults to authenticated user)"
-    ),
-    format_type: str = typer.Option(
-        "table", "--format", "-f", help="Output format (table, json)"
-    ),
+    username: str | None = typer.Argument(None, help="GitHub username (defaults to authenticated user)"),
+    format_type: str = typer.Option("table", "--format", "-f", help="Output format (table, json)"),
     output: str | None = typer.Option(None, "--output", "-o", help="Output file path"),
 ) -> None:
     """Get user information."""
@@ -71,18 +67,10 @@ async def user_info(
 @user_app.command("starred")
 @handle_exceptions  # type: ignore[misc]
 async def user_starred(
-    username: str | None = typer.Argument(
-        None, help="GitHub username (defaults to authenticated user)"
-    ),
-    language: str | None = typer.Option(
-        None, "--language", "-l", help="Filter by programming language"
-    ),
-    limit: int = typer.Option(
-        30, "--limit", help="Maximum number of repositories to fetch"
-    ),
-    format_type: str = typer.Option(
-        "table", "--format", "-f", help="Output format (table, json, csv)"
-    ),
+    username: str | None = typer.Argument(None, help="GitHub username (defaults to authenticated user)"),
+    language: str | None = typer.Option(None, "--language", "-l", help="Filter by programming language"),
+    limit: int = typer.Option(30, "--limit", help="Maximum number of repositories to fetch"),
+    format_type: str = typer.Option("table", "--format", "-f", help="Output format (table, json, csv)"),
     output: str | None = typer.Option(None, "--output", "-o", help="Output file path"),
 ) -> None:
     """List starred repositories."""
@@ -127,13 +115,9 @@ async def user_starred(
 @user_app.command("gists")
 @handle_exceptions  # type: ignore[misc]
 async def user_gists(
-    username: str | None = typer.Argument(
-        None, help="GitHub username (defaults to authenticated user)"
-    ),
+    username: str | None = typer.Argument(None, help="GitHub username (defaults to authenticated user)"),
     public_only: bool = typer.Option(False, "--public", help="Show only public gists"),
-    format_type: str = typer.Option(
-        "table", "--format", "-f", help="Output format (table, json)"
-    ),
+    format_type: str = typer.Option("table", "--format", "-f", help="Output format (table, json)"),
     output: str | None = typer.Option(None, "--output", "-o", help="Output file path"),
 ) -> None:
     """List user gists."""

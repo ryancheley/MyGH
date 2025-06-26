@@ -84,9 +84,7 @@ class TestGitHubClient:
     @respx.mock
     async def test_request_success(self, mock_github_token):
         """Test successful API request."""
-        respx.get("https://api.github.com/test").mock(
-            return_value=httpx.Response(200, json={"message": "success"})
-        )
+        respx.get("https://api.github.com/test").mock(return_value=httpx.Response(200, json={"message": "success"}))
 
         client = GitHubClient()
         result = await client._request("GET", "/test")
@@ -96,23 +94,17 @@ class TestGitHubClient:
     @respx.mock
     async def test_request_401_error(self, mock_github_token):
         """Test 401 authentication error."""
-        respx.get("https://api.github.com/test").mock(
-            return_value=httpx.Response(401, text="Unauthorized")
-        )
+        respx.get("https://api.github.com/test").mock(return_value=httpx.Response(401, text="Unauthorized"))
 
         client = GitHubClient()
-        with pytest.raises(
-            AuthenticationError, match="Invalid or expired GitHub token"
-        ):
+        with pytest.raises(AuthenticationError, match="Invalid or expired GitHub token"):
             await client._request("GET", "/test")
 
     @pytest.mark.asyncio
     @respx.mock
     async def test_request_403_rate_limit(self, mock_github_token):
         """Test 403 rate limit error."""
-        respx.get("https://api.github.com/test").mock(
-            return_value=httpx.Response(403, text="rate limit exceeded")
-        )
+        respx.get("https://api.github.com/test").mock(return_value=httpx.Response(403, text="rate limit exceeded"))
 
         client = GitHubClient()
         with pytest.raises(RateLimitError, match="GitHub API rate limit exceeded"):
@@ -122,9 +114,7 @@ class TestGitHubClient:
     @respx.mock
     async def test_request_403_forbidden(self, mock_github_token):
         """Test 403 forbidden error."""
-        respx.get("https://api.github.com/test").mock(
-            return_value=httpx.Response(403, text="Forbidden")
-        )
+        respx.get("https://api.github.com/test").mock(return_value=httpx.Response(403, text="Forbidden"))
 
         client = GitHubClient()
         with pytest.raises(APIError, match="Forbidden"):
@@ -134,9 +124,7 @@ class TestGitHubClient:
     @respx.mock
     async def test_request_400_error(self, mock_github_token):
         """Test 400+ error."""
-        respx.get("https://api.github.com/test").mock(
-            return_value=httpx.Response(404, text="Not Found")
-        )
+        respx.get("https://api.github.com/test").mock(return_value=httpx.Response(404, text="Not Found"))
 
         client = GitHubClient()
         with pytest.raises(APIError, match="API error: Not Found"):
@@ -147,9 +135,7 @@ class TestGitHubClient:
         """Test network error handling."""
         client = GitHubClient()
 
-        with patch.object(
-            client.client, "request", side_effect=httpx.RequestError("Network error")
-        ):
+        with patch.object(client.client, "request", side_effect=httpx.RequestError("Network error")):
             with pytest.raises(APIError, match="Request failed: Network error"):
                 await client._request("GET", "/test")
 
@@ -157,9 +143,7 @@ class TestGitHubClient:
     @respx.mock
     async def test_get_user_authenticated(self, mock_github_token, sample_user_data):
         """Test getting authenticated user."""
-        respx.get("https://api.github.com/user").mock(
-            return_value=httpx.Response(200, json=sample_user_data)
-        )
+        respx.get("https://api.github.com/user").mock(return_value=httpx.Response(200, json=sample_user_data))
 
         client = GitHubClient()
         user = await client.get_user()
@@ -172,9 +156,7 @@ class TestGitHubClient:
     @respx.mock
     async def test_get_user_by_username(self, mock_github_token, sample_user_data):
         """Test getting user by username."""
-        respx.get("https://api.github.com/users/testuser").mock(
-            return_value=httpx.Response(200, json=sample_user_data)
-        )
+        respx.get("https://api.github.com/users/testuser").mock(return_value=httpx.Response(200, json=sample_user_data))
 
         client = GitHubClient()
         user = await client.get_user("testuser")
@@ -186,9 +168,7 @@ class TestGitHubClient:
     @respx.mock
     async def test_get_user_invalid_data(self, mock_github_token):
         """Test getting user with invalid data."""
-        respx.get("https://api.github.com/user").mock(
-            return_value=httpx.Response(200, json={"invalid": "data"})
-        )
+        respx.get("https://api.github.com/user").mock(return_value=httpx.Response(200, json={"invalid": "data"}))
 
         client = GitHubClient()
         with pytest.raises(APIError, match="Invalid user data"):
@@ -199,9 +179,7 @@ class TestGitHubClient:
     async def test_get_starred_repos(self, mock_github_token, sample_repo_data):
         """Test getting starred repositories."""
         repos_data = [sample_repo_data]
-        respx.get("https://api.github.com/user/starred").mock(
-            return_value=httpx.Response(200, json=repos_data)
-        )
+        respx.get("https://api.github.com/user/starred").mock(return_value=httpx.Response(200, json=repos_data))
 
         client = GitHubClient()
         repos = await client.get_starred_repos()
@@ -212,14 +190,10 @@ class TestGitHubClient:
 
     @pytest.mark.asyncio
     @respx.mock
-    async def test_get_starred_repos_with_language_filter(
-        self, mock_github_token, sample_repo_data
-    ):
+    async def test_get_starred_repos_with_language_filter(self, mock_github_token, sample_repo_data):
         """Test getting starred repositories with language filter."""
         repos_data = [sample_repo_data]
-        respx.get("https://api.github.com/user/starred").mock(
-            return_value=httpx.Response(200, json=repos_data)
-        )
+        respx.get("https://api.github.com/user/starred").mock(return_value=httpx.Response(200, json=repos_data))
 
         client = GitHubClient()
         repos = await client.get_starred_repos(language="Python")
@@ -229,14 +203,10 @@ class TestGitHubClient:
 
     @pytest.mark.asyncio
     @respx.mock
-    async def test_get_starred_repos_language_filter_no_match(
-        self, mock_github_token, sample_repo_data
-    ):
+    async def test_get_starred_repos_language_filter_no_match(self, mock_github_token, sample_repo_data):
         """Test language filter with no matches."""
         repos_data = [sample_repo_data]
-        respx.get("https://api.github.com/user/starred").mock(
-            return_value=httpx.Response(200, json=repos_data)
-        )
+        respx.get("https://api.github.com/user/starred").mock(return_value=httpx.Response(200, json=repos_data))
 
         client = GitHubClient()
         repos = await client.get_starred_repos(language="Go")
@@ -248,9 +218,7 @@ class TestGitHubClient:
     async def test_get_user_repos(self, mock_github_token, sample_repo_data):
         """Test getting user repositories."""
         repos_data = [sample_repo_data]
-        respx.get("https://api.github.com/user/repos").mock(
-            return_value=httpx.Response(200, json=repos_data)
-        )
+        respx.get("https://api.github.com/user/repos").mock(return_value=httpx.Response(200, json=repos_data))
 
         client = GitHubClient()
         repos = await client.get_user_repos()
@@ -260,14 +228,10 @@ class TestGitHubClient:
 
     @pytest.mark.asyncio
     @respx.mock
-    async def test_get_user_repos_with_params(
-        self, mock_github_token, sample_repo_data
-    ):
+    async def test_get_user_repos_with_params(self, mock_github_token, sample_repo_data):
         """Test getting user repositories with parameters."""
         repos_data = [sample_repo_data]
-        respx.get("https://api.github.com/users/testuser/repos").mock(
-            return_value=httpx.Response(200, json=repos_data)
-        )
+        respx.get("https://api.github.com/users/testuser/repos").mock(return_value=httpx.Response(200, json=repos_data))
 
         client = GitHubClient()
         repos = await client.get_user_repos(
@@ -281,12 +245,24 @@ class TestGitHubClient:
     async def test_get_user_gists(self, mock_github_token, sample_gist_data):
         """Test getting user gists."""
         gists_data = [sample_gist_data]
-        respx.get("https://api.github.com/user/gists").mock(
-            return_value=httpx.Response(200, json=gists_data)
-        )
+        respx.get("https://api.github.com/gists").mock(return_value=httpx.Response(200, json=gists_data))
 
         client = GitHubClient()
         gists = await client.get_user_gists()
+
+        assert len(gists) == 1
+        assert isinstance(gists[0], GitHubGist)
+        assert gists[0].id == "abc123"
+
+    @pytest.mark.asyncio
+    @respx.mock
+    async def test_get_user_gists_with_username(self, mock_github_token, sample_gist_data):
+        """Test getting gists for a specific user."""
+        gists_data = [sample_gist_data]
+        respx.get("https://api.github.com/users/testuser/gists").mock(return_value=httpx.Response(200, json=gists_data))
+
+        client = GitHubClient()
+        gists = await client.get_user_gists(username="testuser")
 
         assert len(gists) == 1
         assert isinstance(gists[0], GitHubGist)
@@ -310,9 +286,7 @@ class TestGitHubClient:
 
     @pytest.mark.asyncio
     @respx.mock
-    async def test_get_repo_issues_with_filters(
-        self, mock_github_token, sample_issue_data
-    ):
+    async def test_get_repo_issues_with_filters(self, mock_github_token, sample_issue_data):
         """Test getting repository issues with filters."""
         issues_data = [sample_issue_data]
         respx.get("https://api.github.com/repos/testuser/test-repo/issues").mock(
@@ -344,9 +318,7 @@ class TestGitHubClient:
                 }
             }
         }
-        respx.get("https://api.github.com/rate_limit").mock(
-            return_value=httpx.Response(200, json=rate_limit_data)
-        )
+        respx.get("https://api.github.com/rate_limit").mock(return_value=httpx.Response(200, json=rate_limit_data))
 
         client = GitHubClient()
         rate_limit = await client.get_rate_limit()
@@ -360,9 +332,7 @@ class TestGitHubClient:
     @respx.mock
     async def test_get_rate_limit_invalid_data(self, mock_github_token):
         """Test getting rate limit with invalid data."""
-        respx.get("https://api.github.com/rate_limit").mock(
-            return_value=httpx.Response(200, json={"invalid": "data"})
-        )
+        respx.get("https://api.github.com/rate_limit").mock(return_value=httpx.Response(200, json={"invalid": "data"}))
 
         client = GitHubClient()
         with pytest.raises(APIError, match="Invalid rate limit data"):
@@ -373,9 +343,7 @@ class TestGitHubClient:
         """Test client close method."""
         client = GitHubClient()
 
-        with patch.object(
-            client.client, "aclose", new_callable=AsyncMock
-        ) as mock_close:
+        with patch.object(client.client, "aclose", new_callable=AsyncMock) as mock_close:
             await client.close()
             mock_close.assert_called_once()
 
@@ -386,9 +354,9 @@ class TestGitHubClient:
         repos_data = [sample_repo_data]
 
         # Mock the request with specific query parameters
-        request_mock = respx.get(
-            "https://api.github.com/user/starred", params={"per_page": 100, "page": 2}
-        ).mock(return_value=httpx.Response(200, json=repos_data))
+        request_mock = respx.get("https://api.github.com/user/starred", params={"per_page": 100, "page": 2}).mock(
+            return_value=httpx.Response(200, json=repos_data)
+        )
 
         client = GitHubClient()
         await client.get_starred_repos(per_page=100, page=2)
@@ -397,16 +365,14 @@ class TestGitHubClient:
 
     @pytest.mark.asyncio
     @respx.mock
-    async def test_per_page_limit_enforcement(
-        self, mock_github_token, sample_repo_data
-    ):
+    async def test_per_page_limit_enforcement(self, mock_github_token, sample_repo_data):
         """Test that per_page parameter is limited to 100."""
         repos_data = [sample_repo_data]
 
         # Should limit to 100 even if we request 150
-        request_mock = respx.get(
-            "https://api.github.com/user/starred", params={"per_page": 100, "page": 1}
-        ).mock(return_value=httpx.Response(200, json=repos_data))
+        request_mock = respx.get("https://api.github.com/user/starred", params={"per_page": 100, "page": 1}).mock(
+            return_value=httpx.Response(200, json=repos_data)
+        )
 
         client = GitHubClient()
         await client.get_starred_repos(per_page=150)

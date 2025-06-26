@@ -5,9 +5,9 @@ from pathlib import Path
 from typing import Any
 
 try:
-    import tomllib  # type: ignore[import-not-found]
+    import tomllib
 except ImportError:
-    import tomli as tomllib  # type: ignore[import-not-found]
+    import tomli as tomllib
 from pydantic import BaseModel, ConfigDict, Field
 
 

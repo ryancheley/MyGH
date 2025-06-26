@@ -498,13 +498,14 @@ wheels = [
 
 [[package]]
 name = "mygh"
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
     { name = "httpx" },
     { name = "pydantic" },
     { name = "rich" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "typer" },
 ]
 
@@ -542,6 +543,7 @@ requires-dist = [
     { name = "respx", marker = "extra == 'dev'", specifier = ">=0.20.0" },
     { name = "rich", specifier = ">=13.0.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.0.280" },
+    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=1.2.0" },
     { name = "typer", specifier = ">=0.9.0" },
 ]
 

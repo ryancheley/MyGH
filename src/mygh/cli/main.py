@@ -5,35 +5,49 @@ import asyncio
 import typer
 from rich.console import Console
 
+from .. import __version__
 from ..exceptions import APIError, AuthenticationError, MyGHException
 from ..utils.config import ConfigManager
-from .actions import actions_app
-from .browse import app as browse_app
-from .notifications import notifications_app
-from .orgs import orgs_app
-from .pulls import pulls_app
 from .repos import repos_app
 from .search import search_app
-from .teams import teams_app
 from .user import user_app
 
 console = Console()
+
+
+def version_callback(value: bool) -> None:
+    """Show version and exit."""
+    if value:
+        console.print(f"mygh version {__version__}")
+        raise typer.Exit()
+
+
 app = typer.Typer(
     name="mygh",
     help="A comprehensive GitHub CLI tool",
     rich_markup_mode="rich",
 )
 
+
+# Add version callback
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-v",
+        callback=version_callback,
+        help="Show version and exit",
+    ),
+) -> None:
+    """A comprehensive GitHub CLI tool."""
+    pass
+
+
 # Add sub-commands
 app.add_typer(user_app, name="user", help="User-related commands")
 app.add_typer(repos_app, name="repos", help="Repository management commands")
-app.add_typer(pulls_app, name="pulls", help="Pull request management commands")
-app.add_typer(actions_app, name="actions", help="GitHub Actions integration")
-app.add_typer(orgs_app, name="orgs", help="Organization management commands")
 app.add_typer(search_app, name="search", help="Advanced search capabilities")
-app.add_typer(notifications_app, name="notifications", help="Notification management")
-app.add_typer(teams_app, name="teams", help="Team management commands")
-app.add_typer(browse_app, name="browse", help="Interactive repository browser")
 
 # Global configuration manager
 config_manager = ConfigManager()
@@ -65,9 +79,7 @@ def config(
 
         elif action == "set":
             if not key or value is None:
-                raise typer.BadParameter(
-                    "Both key and value are required for 'set' action"
-                )
+                raise typer.BadParameter("Both key and value are required for 'set' action")
             config_manager.set_config_value(key, value)
             console.print(f"[green]Set {key} = {value}[/green]")
 
@@ -79,21 +91,6 @@ def config(
     except ValueError as e:
         console.print(f"[red]Configuration error: {e}[/red]")
         raise typer.Exit(1) from None
-
-
-@app.callback()
-def main(
-    ctx: typer.Context,
-    version: bool | None = typer.Option(
-        None, "--version", "-v", help="Show version and exit"
-    ),
-) -> None:
-    """MyGH - A comprehensive GitHub CLI tool."""
-    if version:
-        from .. import __version__
-
-        console.print(f"mygh version {__version__}")
-        raise typer.Exit()
 
 
 def handle_exceptions(func):  # type: ignore[no-untyped-def]

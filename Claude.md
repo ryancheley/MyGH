@@ -1,194 +1,208 @@
-# Claude.md - GitHub CLI Expert
+# CLAUDE.md
 
-## Role Definition
-You are an expert software architect and CLI developer specializing in:
-- **GitHub CLI** and GitHub REST/GraphQL APIs
-- **Python** development with modern best practices
-- **Typer** framework for building beautiful CLI applications
-- **CLI/UX design** principles for developer tools
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Scope
-Build a comprehensive CLI tool that provides GitHub user insights and repository management capabilities. The tool should feel professional, intuitive, and follow CLI best practices.
+## Project Overview
 
-## Core Technologies & Expertise
+MyGH is a comprehensive GitHub CLI tool built with Python, Typer, and Rich. It provides GitHub user insights and repository management through a modern command-line interface with beautiful output formatting.
 
-### GitHub CLI & API
-- Deep knowledge of GitHub REST API v4 and GraphQL API v4
-- Understanding of authentication methods (tokens, OAuth, GitHub CLI integration)
-- Expertise in rate limiting, pagination, and error handling
-- Knowledge of GitHub CLI (`gh`) integration and extension patterns
+**Key Technologies:**
+- Python 3.10+ (supports up to 3.14 beta)
+- Typer framework for CLI commands
+- Rich for terminal output formatting
+- httpx for async HTTP client
+- Pydantic for data validation
+- uv for package management
 
-### Python Development
-- Modern Python (3.8+) with type hints and dataclasses
-- Async/await patterns for concurrent API requests
-- Error handling and logging best practices
-- Testing with pytest and proper test structure
-- Virtual environment and dependency management
+## Development Commands
 
-### Typer Framework
-- Advanced Typer patterns for complex CLI applications
-- Rich integration for beautiful terminal output
-- Command grouping and sub-command organization
-- Configuration management and environment variables
-- Progress bars, tables, and interactive prompts
-
-### CLI Design Principles
-- Unix philosophy and command-line conventions
-- Intuitive command naming and argument patterns
-- Helpful error messages and user feedback
-- Configuration file management
-- Output formatting (JSON, table, CSV options)
-
-## Required CLI Features
-
-### User Information Commands
+### Package Management
 ```bash
-# Get authenticated user details
-mygh user info
+# Install dependencies and development tools
+uv sync --dev
 
-# List starred repositories with filtering options
-mygh user starred [--language python] [--limit 50] [--format table|json]
+# Install without dev dependencies
+uv sync
 
-# List user's gists
-mygh user gists [--public] [--format table|json]
+# Run the CLI tool
+uv run mygh --help
 ```
 
-### Repository Management
+### Testing
+
+The use of mocks should only be done sparingly, and only when an external API call is made. This mocks should be marked as such with a customer pytest mark of pytest.mark.api_mock
+
+Testing coverage should never be less than 90%. 
+
 ```bash
-# List owned repositories
-mygh repos list [--type public|private|all] [--sort updated|created|name]
+# Run all tests with coverage (requires 95%+ coverage)
+uv run pytest --cov=src/mygh --cov-fail-under=95 -W error
 
-# Get repository details
-mygh repos info <repo-name>
+# Run specific test file
+uv run pytest tests/test_api_client.py
 
-# List issues across all owned repositories
-mygh issues list [--state open|closed|all] [--assignee @me] [--label bug]
+# Run tests with verbose output
+uv run pytest -v
+
+# Generate HTML coverage report
+uv run pytest --cov=src/mygh --cov-report=html
 ```
 
-### Advanced Features
+### Multi-Python Testing with Tox
 ```bash
-# Export data to various formats
-mygh export starred --format csv --output starred-repos.csv
+# Test across all Python versions (3.10-3.14)
+uv run tox
 
-# Interactive repository explorer
-mygh browse
+# Test specific Python version
+uv run tox -e py311
 
-# Configuration management
-mygh config set output-format table
-mygh config list
+# Run linting and formatting checks
+uv run tox -e lint
+
+# Run type checking
+uv run tox -e type
+
+# Run tests with detailed coverage reporting
+uv run tox -e coverage
+
+# Run tests in parallel (faster)
+uv run tox -p auto
 ```
 
-## Code Quality Standards
+### Code Quality
+```bash
+# Run linting checks
+uv run ruff check src tests
 
-### Architecture Patterns
-- Use dependency injection for GitHub API clients
-- Implement proper separation of concerns (CLI layer, API layer, data models)
-- Create reusable components for common operations
-- Follow SOLID principles and clean architecture
+# Format code automatically
+uv run ruff format src tests
 
-### Error Handling
-- Graceful handling of network errors and API rate limits
-- Clear, actionable error messages for users
-- Proper logging for debugging
-- Retry mechanisms for transient failures
+# Run type checking
+uv run mypy src/mygh
 
-### Performance Considerations
-- Implement concurrent requests where appropriate
-- Cache frequently accessed data
-- Efficient pagination handling
-- Memory-conscious data processing for large datasets
-
-### Testing Strategy
-- Unit tests for business logic
-- Integration tests for API interactions
-- CLI testing with Typer's testing utilities
-- Mock external dependencies appropriately
-
-## Development Guidelines
-
-### Code Style
-- Follow PEP 8 and use tools like `ruff`
-- Comprehensive type hints using `typing` module
-- Docstrings for all public functions and classes
-- Clear variable and function naming
-
-### Project Structure
-```
-github-cli-tool/
-├── src/
-│   └── mygh/
-│       ├── __init__.py
-│       ├── cli/
-│       │   ├── __init__.py
-│       │   ├── main.py
-│       │   ├── user.py
-│       │   ├── repos.py
-│       │   └── issues.py
-│       ├── api/
-│       │   ├── __init__.py
-│       │   ├── client.py
-│       │   └── models.py
-│       ├── utils/
-│       │   ├── __init__.py
-│       │   ├── formatting.py
-│       │   └── config.py
-│       └── exceptions.py
-├── tests/
-├── docs/
-├── pyproject.toml
-├── README.md
-└── Claude.md
+# Fix linting issues automatically
+uv run ruff check --fix src tests
 ```
 
-### Dependencies
-- `typer[all]` - CLI framework with rich output
-- `httpx` - Modern HTTP client with async support
-- `pydantic` - Data validation and settings management
-- `rich` - Beautiful terminal output
-- `click` - Additional CLI utilities (if needed)
-- `pytest` - Testing framework
-- `respx` - HTTP mocking for tests
+### Git Branching
 
-## User Experience Priorities
+All new features must be done on their own branch. The name of the branch should be feature/issue-title-issue-number. For example, if the issue title was `Feature: Advanced search capabilities #6` the branch created would be `feature/feature-advanced-search-capabilities-6`
 
-### Discoverability
-- Comprehensive help text for all commands
-- Examples in help output
-- Progressive disclosure of advanced options
-- Autocomplete support where possible
+Before pushing any code to GitHub all of the tests must pass locally using `uv run tox`
 
-### Output Formatting
-- Default to human-readable table format
-- Support JSON output for automation
-- Colorized and formatted output using Rich
-- Consistent column ordering and data presentation
+### Building and Publishing
+```bash
+# Build the package
+uv run tox -e build
 
-### Configuration
-- Support for configuration files (TOML/YAML)
-- Environment variable override support
-- Secure credential storage integration
-- Sensible defaults for all options
+# Clean build artifacts
+uv run tox -e clean
+```
 
-## Authentication Strategy
-- Integrate with existing GitHub CLI authentication when available
-- Support personal access tokens
-- Graceful fallback and clear setup instructions
-- Respect GitHub's authentication best practices
+## Architecture Overview
 
-## Response Guidelines
+### CLI Layer (`src/mygh/cli/`)
+- **`main.py`**: Main CLI entry point, global exception handling, configuration commands
+- **`user.py`**: User-related commands (info, starred repos, gists)
+- **`repos.py`**: Repository management commands (list, info, issues)
 
-When providing code or guidance:
-1. Always include comprehensive type hints
-2. Provide complete, runnable examples
-3. Include error handling in code samples
-4. Suggest testing approaches for new features
-5. Consider performance implications
-6. Document any GitHub API limitations or considerations
-7. Follow the project structure outlined above
+### API Layer (`src/mygh/api/`)
+- **`client.py`**: GitHub REST API client with async support, authentication, and rate limiting
+- **`models.py`**: Pydantic data models for GitHub API responses
 
-## Success Metrics
-The CLI should feel as polished and intuitive as official GitHub CLI extensions, with:
-- Sub-second response times for most operations
-- Zero configuration required for basic usage
-- Self-documenting command structure
-- Robust error recovery and user guidance
+### Utils Layer (`src/mygh/utils/`)
+- **`config.py`**: TOML-based configuration management with environment variable support
+- **`formatting.py`**: Multi-format output (Rich tables, JSON, CSV) with commit age indicators
+
+### Exception Handling (`src/mygh/exceptions.py`)
+Custom exception classes for different error scenarios
+
+## Authentication Architecture
+
+The tool supports multiple authentication methods in order of precedence:
+1. `GITHUB_TOKEN` environment variable
+2. `GH_TOKEN` environment variable (GitHub CLI compatibility)
+3. GitHub CLI authentication (`gh auth status`)
+
+Authentication is handled by the `GitHubClient` class in `api/client.py` with automatic token validation and rate limit management.
+
+## Configuration System
+
+Configuration is managed through:
+- **File**: `~/.config/mygh/config.toml` (TOML format)
+- **Environment Variables**: `MYGH_*` prefix for settings
+- **Defaults**: Sensible defaults for all options
+
+Key configuration options:
+- `output-format`: Default output format (table, json, csv)
+- `default-per-page`: Default pagination limit
+- Authentication tokens (never saved to config files)
+
+## Output Formatting
+
+The formatting system (`utils/formatting.py`) provides:
+- **Rich Tables**: Colorized terminal output with commit age indicators
+- **JSON Export**: Machine-readable format for automation
+- **CSV Export**: Data analysis format for repositories
+- **Consistent Styling**: Unified color scheme and formatting across all commands
+
+## Error Handling Strategy
+
+Global error handling is implemented through:
+- **Decorator Pattern**: `@handle_errors` decorator in `main.py`
+- **Custom Exceptions**: Specific exception types for different error scenarios
+- **User-Friendly Messages**: Clear, actionable error messages
+- **API Rate Limiting**: Automatic handling of GitHub API rate limits
+
+## Testing Architecture
+
+The test suite achieves 97% coverage with:
+- **Async Testing**: Full async/await support with pytest-asyncio
+- **HTTP Mocking**: Complete API mocking with respx
+- **CLI Testing**: Command testing with Typer's test utilities
+- **Multi-Python**: Tox testing across Python 3.10-3.14 (beta)
+
+Test organization:
+- `tests/test_api_client.py`: GitHub API client tests
+- `tests/test_*_coverage.py`: Comprehensive coverage tests
+- `tests/test_*_extended.py`: Extended functionality tests
+
+## Development Workflow
+
+1. **Setup**: `uv sync --dev`
+2. **Development**: Make changes to `src/mygh/`
+3. **Testing**: `uv run pytest --cov=src/mygh --cov-fail-under=95`
+4. **Multi-Python**: `uv run tox` (tests across Python versions)
+5. **Code Quality**: `uv run tox -e lint,type`
+6. **Build**: `uv run tox -e build`
+
+## Key Design Patterns
+
+- **Dependency Injection**: GitHub client is injected into CLI commands
+- **Async/Await**: All API calls use async patterns for performance
+- **Type Safety**: Comprehensive type hints with strict MyPy configuration
+- **Configuration Layering**: Environment variables override config file settings
+- **Error Propagation**: Errors bubble up through layers with appropriate handling
+
+## Common Development Tasks
+
+### Adding a New CLI Command
+1. Add command function to appropriate module in `src/mygh/cli/`
+2. Use type hints and proper error handling
+3. Add tests in corresponding test file
+4. Update documentation if needed
+
+### Adding API Integration
+1. Add new methods to `GitHubClient` in `src/mygh/api/client.py`
+2. Create Pydantic models in `src/mygh/api/models.py`
+3. Add comprehensive tests with HTTP mocking
+4. Handle rate limiting and error scenarios
+
+### Testing a Single Command
+```bash
+# Test specific CLI command
+uv run pytest tests/test_user.py::test_user_info_command -v
+
+# Test with coverage for specific module
+uv run pytest tests/test_repos.py --cov=src/mygh/cli/repos --cov-report=term-missing
+```

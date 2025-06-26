@@ -364,3 +364,32 @@ default_per_page = 50
 
         assert config1 is not config2
         assert manager1._config is not manager2._config
+
+    def test_tomli_import_fallback(self):
+        """Test tomli import fallback for Python < 3.11."""
+        # This test ensures the import fallback is covered
+        import sys
+        from unittest.mock import MagicMock, patch
+
+        # Mock tomli module since it may not be installed
+        mock_tomli = MagicMock()
+        mock_tomli.load.return_value = {"output-format": "json"}
+
+        # Temporarily remove tomllib to test fallback
+        with patch.dict(sys.modules, {"tomllib": None, "tomli": mock_tomli}):
+            # Force reimport to test fallback
+            import importlib
+
+            import mygh.utils.config
+
+            importlib.reload(mygh.utils.config)
+
+            # Verify that the module still works with tomli fallback
+            manager = mygh.utils.config.ConfigManager()
+            # Create a fake config file to trigger the tomli usage
+            manager.config_file.write_text('output-format = "json"')
+            config = manager.load_config()
+            assert isinstance(config, mygh.utils.config.Config)
+
+            # Restore the module state
+            importlib.reload(mygh.utils.config)

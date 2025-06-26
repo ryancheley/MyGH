@@ -48,20 +48,20 @@ def bump_version(current_version, bump_type):
 def update_pyproject_version(new_version):
     """Update version in pyproject.toml."""
     pyproject_path = Path("pyproject.toml")
-    
+
     if not pyproject_path.exists():
         raise FileNotFoundError("pyproject.toml not found in current directory")
-    
+
     content = pyproject_path.read_text()
-    
+
     # Update version line
     pattern = r'^version = "[^"]*"'
     replacement = f'version = "{new_version}"'
     new_content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
-    
+
     if content == new_content:
         raise ValueError("Could not find version line in pyproject.toml")
-    
+
     pyproject_path.write_text(new_content)
     print(f"Updated pyproject.toml version to {new_version}")
 
@@ -69,23 +69,23 @@ def update_pyproject_version(new_version):
 def create_tag_and_commit(new_version):
     """Update pyproject.toml, commit changes, and create/push git tag."""
     tag_name = f"v{new_version}"
-    
+
     # Update pyproject.toml
     update_pyproject_version(new_version)
-    
+
     # Stage and commit the version change
     subprocess.run(["git", "add", "pyproject.toml"], check=True)
     commit_msg = f"🔖 Bump version to {new_version} for release"
     subprocess.run(["git", "commit", "-m", commit_msg], check=True)
-    
+
     # Create annotated tag
     tag_msg = f"Release {new_version}"
     subprocess.run(["git", "tag", "-a", tag_name, "-m", tag_msg], check=True)
-    
+
     # Push commit and tag
     subprocess.run(["git", "push", "origin", "main"], check=True)
     subprocess.run(["git", "push", "origin", tag_name], check=True)
-    
+
     print(f"Created and pushed commit and tag: {tag_name}")
 
 

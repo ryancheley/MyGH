@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mygh"
-version = "0.2.0"
+version = "0.1.2"
 description = "A comprehensive GitHub CLI tool built with Python and Typer"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -33,6 +33,7 @@ dependencies = [
     "pydantic>=2.0.0",
     "rich>=13.0.0",
     "click>=8.0.0",
+    "tomli>=1.2.0; python_version<'3.11'",
 ]
 
 [project.urls]
@@ -79,7 +80,7 @@ include = [
 
 [tool.ruff]
 target-version = "py310"
-line-length = 88
+line-length = 120
 
 [tool.ruff.lint]
 select = [
@@ -111,6 +112,9 @@ python_functions = ["test_*"]
 addopts = "--strict-markers --cov=mygh --cov-report=term-missing --cov-report=html --cov-fail-under=95"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "api_mock: marks tests that mock external API calls"
+]
 
 
 [tool.coverage.run]
