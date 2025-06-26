@@ -41,7 +41,7 @@ class TestMainCLI:
         """Test that version can be imported."""
         from mygh import __version__
 
-        assert __version__ == "0.1.3"
+        assert __version__ == "0.1.4"
 
     def test_exception_decorator_sync_function(self):
         """Test exception decorator with sync function."""
