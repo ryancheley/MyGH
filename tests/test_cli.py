@@ -214,9 +214,7 @@ class TestUserCLI:
         assert "--output" in clean_output
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_info_command(
-        self, mock_client_class, cli_runner, mock_github_token, sample_user
-    ):
+    def test_user_info_command(self, mock_client_class, cli_runner, mock_github_token, sample_user):
         """Test user info command."""
         # Mock the client and its methods
         mock_client = AsyncMock()
@@ -231,9 +229,7 @@ class TestUserCLI:
             mock_print.assert_called_once_with(sample_user, "table", None)
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_info_with_username(
-        self, mock_client_class, cli_runner, mock_github_token, sample_user
-    ):
+    def test_user_info_with_username(self, mock_client_class, cli_runner, mock_github_token, sample_user):
         """Test user info command with username."""
         mock_client = AsyncMock()
         mock_client.get_user.return_value = sample_user
@@ -246,9 +242,7 @@ class TestUserCLI:
             mock_client.get_user.assert_called_once_with("testuser")
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_info_json_format(
-        self, mock_client_class, cli_runner, mock_github_token, sample_user
-    ):
+    def test_user_info_json_format(self, mock_client_class, cli_runner, mock_github_token, sample_user):
         """Test user info command with JSON format."""
         mock_client = AsyncMock()
         mock_client.get_user.return_value = sample_user
@@ -261,9 +255,7 @@ class TestUserCLI:
             mock_print.assert_called_once_with(sample_user, "json", None)
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_starred_command(
-        self, mock_client_class, cli_runner, mock_github_token, sample_repo
-    ):
+    def test_user_starred_command(self, mock_client_class, cli_runner, mock_github_token, sample_repo):
         """Test user starred command."""
         mock_client = AsyncMock()
         mock_client.get_starred_repos.return_value = [sample_repo]
@@ -274,14 +266,10 @@ class TestUserCLI:
 
             assert result.exit_code == 0
             mock_client.get_starred_repos.assert_called()
-            mock_print.assert_called_once_with(
-                [sample_repo], "table", None, is_starred=True
-            )
+            mock_print.assert_called_once_with([sample_repo], "table", None, is_starred=True)
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_starred_with_language(
-        self, mock_client_class, cli_runner, mock_github_token, sample_repo
-    ):
+    def test_user_starred_with_language(self, mock_client_class, cli_runner, mock_github_token, sample_repo):
         """Test user starred command with language filter."""
         mock_client = AsyncMock()
         mock_client.get_starred_repos.return_value = [sample_repo]
@@ -295,9 +283,7 @@ class TestUserCLI:
         assert call_args.kwargs["language"] == "Python"
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_starred_no_results(
-        self, mock_client_class, cli_runner, mock_github_token
-    ):
+    def test_user_starred_no_results(self, mock_client_class, cli_runner, mock_github_token):
         """Test user starred command with no results."""
         mock_client = AsyncMock()
         mock_client.get_starred_repos.return_value = []
@@ -309,9 +295,7 @@ class TestUserCLI:
         assert "No starred repositories found" in result.stdout
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_gists_command(
-        self, mock_client_class, cli_runner, mock_github_token, sample_user
-    ):
+    def test_user_gists_command(self, mock_client_class, cli_runner, mock_github_token, sample_user):
         """Test user gists command."""
         gist = GitHubGist(
             id="abc123",
@@ -336,9 +320,7 @@ class TestUserCLI:
             mock_print.assert_called_once()
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_gists_public_only(
-        self, mock_client_class, cli_runner, mock_github_token, sample_user
-    ):
+    def test_user_gists_public_only(self, mock_client_class, cli_runner, mock_github_token, sample_user):
         """Test user gists command with public only filter."""
         public_gist = GitHubGist(
             id="public123",
@@ -376,9 +358,7 @@ class TestUserCLI:
             assert printed_gists[0].public is True
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_gists_no_results(
-        self, mock_client_class, cli_runner, mock_github_token
-    ):
+    def test_user_gists_no_results(self, mock_client_class, cli_runner, mock_github_token):
         """Test user gists command with no results."""
         mock_client = AsyncMock()
         mock_client.get_user_gists.return_value = []
@@ -390,9 +370,7 @@ class TestUserCLI:
         assert "No gists found" in result.stdout
 
     @patch("mygh.cli.user.GitHubClient")
-    def test_user_mygh_exception(
-        self, mock_client_class, cli_runner, mock_github_token
-    ):
+    def test_user_mygh_exception(self, mock_client_class, cli_runner, mock_github_token):
         """Test user command with MyGH exception."""
         from mygh.exceptions import MyGHException
 
@@ -445,9 +423,7 @@ class TestReposCLI:
         assert "issues" in result.stdout
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_list_command(
-        self, mock_client_class, cli_runner, mock_github_token, sample_repo
-    ):
+    def test_repos_list_command(self, mock_client_class, cli_runner, mock_github_token, sample_repo):
         """Test repos list command."""
         mock_client = AsyncMock()
         mock_client.get_user_repos.return_value = [sample_repo]
@@ -461,9 +437,7 @@ class TestReposCLI:
             mock_print.assert_called_once()
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_list_with_params(
-        self, mock_client_class, cli_runner, mock_github_token, sample_repo
-    ):
+    def test_repos_list_with_params(self, mock_client_class, cli_runner, mock_github_token, sample_repo):
         """Test repos list command with parameters."""
         mock_client = AsyncMock()
         mock_client.get_user_repos.return_value = [sample_repo]
@@ -480,9 +454,7 @@ class TestReposCLI:
         assert call_args.kwargs["sort"] == "created"
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_info_command(
-        self, mock_client_class, cli_runner, mock_github_token, sample_repo
-    ):
+    def test_repos_info_command(self, mock_client_class, cli_runner, mock_github_token, sample_repo):
         """Test repos info command."""
         mock_client = AsyncMock()
         mock_client.get_user_repos.return_value = [sample_repo]
@@ -502,9 +474,7 @@ class TestReposCLI:
         assert "must be in 'owner/repo' format" in result.stdout
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_info_not_found(
-        self, mock_client_class, cli_runner, mock_github_token
-    ):
+    def test_repos_info_not_found(self, mock_client_class, cli_runner, mock_github_token):
         """Test repos info command when repository is not found."""
         mock_client = AsyncMock()
         mock_client.get_user_repos.return_value = []  # No repos found
@@ -516,9 +486,7 @@ class TestReposCLI:
         assert "not found" in result.stdout
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_issues_command(
-        self, mock_client_class, cli_runner, mock_github_token, sample_user
-    ):
+    def test_repos_issues_command(self, mock_client_class, cli_runner, mock_github_token, sample_user):
         """Test repos issues command."""
         issue = GitHubIssue(
             id=11111,
@@ -548,9 +516,7 @@ class TestReposCLI:
             mock_print.assert_called_once()
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_issues_with_filters(
-        self, mock_client_class, cli_runner, mock_github_token, sample_user
-    ):
+    def test_repos_issues_with_filters(self, mock_client_class, cli_runner, mock_github_token, sample_user):
         """Test repos issues command with filters."""
         mock_client = AsyncMock()
         mock_client.get_repo_issues.return_value = []
@@ -585,9 +551,7 @@ class TestReposCLI:
         assert "must be in 'owner/repo' format" in result.stdout
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_list_no_results(
-        self, mock_client_class, cli_runner, mock_github_token
-    ):
+    def test_repos_list_no_results(self, mock_client_class, cli_runner, mock_github_token):
         """Test repos list command with no results."""
         mock_client = AsyncMock()
         mock_client.get_user_repos.return_value = []
@@ -599,9 +563,7 @@ class TestReposCLI:
         assert "No repositories found" in result.stdout
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_issues_no_results(
-        self, mock_client_class, cli_runner, mock_github_token
-    ):
+    def test_repos_issues_no_results(self, mock_client_class, cli_runner, mock_github_token):
         """Test repos issues command with no results."""
         mock_client = AsyncMock()
         mock_client.get_repo_issues.return_value = []
@@ -625,9 +587,7 @@ class TestReposCLI:
         assert "Authentication error" in result.stdout
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_mygh_exception(
-        self, mock_client_class, cli_runner, mock_github_token
-    ):
+    def test_repos_mygh_exception(self, mock_client_class, cli_runner, mock_github_token):
         """Test repos command with MyGH exception."""
         from mygh.exceptions import MyGHException
 
@@ -641,9 +601,7 @@ class TestReposCLI:
         assert "Error: Custom repos error" in result.stdout
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_keyboard_interrupt(
-        self, mock_client_class, cli_runner, mock_github_token
-    ):
+    def test_repos_keyboard_interrupt(self, mock_client_class, cli_runner, mock_github_token):
         """Test repos command with keyboard interrupt."""
         mock_client = AsyncMock()
         mock_client.get_user_repos.side_effect = KeyboardInterrupt()
@@ -655,9 +613,7 @@ class TestReposCLI:
         assert "Operation cancelled" in result.stdout
 
     @patch("mygh.cli.repos.GitHubClient")
-    def test_repos_unexpected_error(
-        self, mock_client_class, cli_runner, mock_github_token
-    ):
+    def test_repos_unexpected_error(self, mock_client_class, cli_runner, mock_github_token):
         """Test repos command with unexpected error."""
         mock_client = AsyncMock()
         mock_client.get_user_repos.side_effect = ValueError("Unexpected error")

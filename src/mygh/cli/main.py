@@ -79,9 +79,7 @@ def config(
 
         elif action == "set":
             if not key or value is None:
-                raise typer.BadParameter(
-                    "Both key and value are required for 'set' action"
-                )
+                raise typer.BadParameter("Both key and value are required for 'set' action")
             config_manager.set_config_value(key, value)
             console.print(f"[green]Set {key} = {value}[/green]")
 

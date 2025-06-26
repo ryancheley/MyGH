@@ -63,8 +63,7 @@ class GitHubClient:
             pass
 
         raise AuthenticationError(
-            "No GitHub token found. Please set GITHUB_TOKEN environment variable "
-            "or authenticate with 'gh auth login'"
+            "No GitHub token found. Please set GITHUB_TOKEN environment variable or authenticate with 'gh auth login'"
         )
 
     def _get_headers(self) -> dict[str, str]:
@@ -168,11 +167,7 @@ class GitHubClient:
 
             # Filter by language if specified
             if language:
-                repos = [
-                    repo
-                    for repo in repos
-                    if repo.language and repo.language.lower() == language.lower()
-                ]
+                repos = [repo for repo in repos if repo.language and repo.language.lower() == language.lower()]
 
             return repos
         except ValidationError as e:
@@ -385,8 +380,6 @@ class GitHubClient:
         """Async context manager entry."""
         return self
 
-    async def __aexit__(
-        self, exc_type: type, exc_val: Exception, exc_tb: object
-    ) -> None:
+    async def __aexit__(self, exc_type: type, exc_val: Exception, exc_tb: object) -> None:
         """Async context manager exit."""
         await self.close()

@@ -338,10 +338,7 @@ class TestCSVFormatting:
 
         lines = result.split("\n")
         header = lines[0]
-        expected_header = (
-            "owner,name,full_name,description,language,stars,"
-            "days_since_last_commit,pushed_at,html_url"
-        )
+        expected_header = "owner,name,full_name,description,language,stars,days_since_last_commit,pushed_at,html_url"
         assert expected_header == header
         assert "testuser" in lines[1]
         assert "test-repo" in lines[1]

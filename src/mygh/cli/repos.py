@@ -50,9 +50,7 @@ def handle_exceptions(func):  # type: ignore[no-untyped-def]
 @repos_app.command("list")
 @handle_exceptions  # type: ignore[misc]
 async def repos_list(
-    username: str | None = typer.Argument(
-        None, help="GitHub username (defaults to authenticated user)"
-    ),
+    username: str | None = typer.Argument(None, help="GitHub username (defaults to authenticated user)"),
     repo_type: str = typer.Option(
         "all",
         "--type",
@@ -65,12 +63,8 @@ async def repos_list(
         "-s",
         help="Sort order (created, updated, pushed, full_name)",
     ),
-    limit: int = typer.Option(
-        30, "--limit", help="Maximum number of repositories to fetch"
-    ),
-    format_type: str = typer.Option(
-        "table", "--format", "-f", help="Output format (table, json, csv)"
-    ),
+    limit: int = typer.Option(30, "--limit", help="Maximum number of repositories to fetch"),
+    format_type: str = typer.Option("table", "--format", "-f", help="Output format (table, json, csv)"),
     output: str | None = typer.Option(None, "--output", "-o", help="Output file path"),
 ) -> None:
     """List repositories."""
@@ -117,9 +111,7 @@ async def repos_list(
 @handle_exceptions  # type: ignore[misc]
 async def repo_info(
     repo_name: str = typer.Argument(help="Repository name (owner/repo format)"),
-    format_type: str = typer.Option(
-        "table", "--format", "-f", help="Output format (table, json)"
-    ),
+    format_type: str = typer.Option("table", "--format", "-f", help="Output format (table, json)"),
     output: str | None = typer.Option(None, "--output", "-o", help="Output file path"),
 ) -> None:
     """Get repository information."""
@@ -149,19 +141,11 @@ async def repo_info(
 @handle_exceptions  # type: ignore[misc]
 async def repo_issues(
     repo_name: str = typer.Argument(help="Repository name (owner/repo format)"),
-    state: str = typer.Option(
-        "open", "--state", "-s", help="Issue state (open, closed, all)"
-    ),
-    assignee: str | None = typer.Option(
-        None, "--assignee", "-a", help="Filter by assignee (@me for yourself)"
-    ),
-    labels: str | None = typer.Option(
-        None, "--labels", "-l", help="Filter by labels (comma-separated)"
-    ),
+    state: str = typer.Option("open", "--state", "-s", help="Issue state (open, closed, all)"),
+    assignee: str | None = typer.Option(None, "--assignee", "-a", help="Filter by assignee (@me for yourself)"),
+    labels: str | None = typer.Option(None, "--labels", "-l", help="Filter by labels (comma-separated)"),
     limit: int = typer.Option(30, "--limit", help="Maximum number of issues to fetch"),
-    format_type: str = typer.Option(
-        "table", "--format", "-f", help="Output format (table, json)"
-    ),
+    format_type: str = typer.Option("table", "--format", "-f", help="Output format (table, json)"),
     output: str | None = typer.Option(None, "--output", "-o", help="Output file path"),
 ) -> None:
     """List repository issues."""
@@ -215,39 +199,19 @@ async def repo_issues(
 @handle_exceptions  # type: ignore[misc]
 async def create_repo(
     name: str = typer.Argument(help="Repository name"),
-    description: str | None = typer.Option(
-        None, "--description", "-d", help="Repository description"
-    ),
+    description: str | None = typer.Option(None, "--description", "-d", help="Repository description"),
     private: bool = typer.Option(False, "--private", help="Make repository private"),
     has_issues: bool = typer.Option(True, "--issues/--no-issues", help="Enable issues"),
     has_wiki: bool = typer.Option(True, "--wiki/--no-wiki", help="Enable wiki"),
-    has_projects: bool = typer.Option(
-        True, "--projects/--no-projects", help="Enable projects"
-    ),
-    auto_init: bool = typer.Option(
-        True, "--init/--no-init", help="Initialize with README"
-    ),
-    gitignore_template: str | None = typer.Option(
-        None, "--gitignore", help="Gitignore template"
-    ),
-    license_template: str | None = typer.Option(
-        None, "--license", help="License template"
-    ),
-    allow_squash_merge: bool = typer.Option(
-        True, "--squash/--no-squash", help="Allow squash merge"
-    ),
-    allow_merge_commit: bool = typer.Option(
-        True, "--merge/--no-merge", help="Allow merge commit"
-    ),
-    allow_rebase_merge: bool = typer.Option(
-        True, "--rebase/--no-rebase", help="Allow rebase merge"
-    ),
-    delete_branch_on_merge: bool = typer.Option(
-        True, "--delete-branch/--keep-branch", help="Delete branch on merge"
-    ),
-    interactive: bool = typer.Option(
-        False, "--interactive", "-i", help="Interactive repository creation"
-    ),
+    has_projects: bool = typer.Option(True, "--projects/--no-projects", help="Enable projects"),
+    auto_init: bool = typer.Option(True, "--init/--no-init", help="Initialize with README"),
+    gitignore_template: str | None = typer.Option(None, "--gitignore", help="Gitignore template"),
+    license_template: str | None = typer.Option(None, "--license", help="License template"),
+    allow_squash_merge: bool = typer.Option(True, "--squash/--no-squash", help="Allow squash merge"),
+    allow_merge_commit: bool = typer.Option(True, "--merge/--no-merge", help="Allow merge commit"),
+    allow_rebase_merge: bool = typer.Option(True, "--rebase/--no-rebase", help="Allow rebase merge"),
+    delete_branch_on_merge: bool = typer.Option(True, "--delete-branch/--keep-branch", help="Delete branch on merge"),
+    interactive: bool = typer.Option(False, "--interactive", "-i", help="Interactive repository creation"),
 ) -> None:
     """Create a new repository."""
     config = config_manager.get_config()
@@ -265,12 +229,8 @@ async def create_repo(
         auto_init = Confirm.ask("Initialize with README?", default=auto_init)
 
         if auto_init:
-            gitignore_template = Prompt.ask(
-                "Gitignore template (optional)", default=gitignore_template or ""
-            )
-            license_template = Prompt.ask(
-                "License template (optional)", default=license_template or ""
-            )
+            gitignore_template = Prompt.ask("Gitignore template (optional)", default=gitignore_template or "")
+            license_template = Prompt.ask("License template (optional)", default=license_template or "")
 
         console.print(f"\n[yellow]Creating repository '{name}'...[/yellow]")
 
@@ -297,9 +257,7 @@ async def create_repo(
 
         repo = await client.create_repo(repo_data)
 
-        console.print(
-            f"[green]✅ Repository '{repo.full_name}' created successfully![/green]"
-        )
+        console.print(f"[green]✅ Repository '{repo.full_name}' created successfully![/green]")
         console.print(f"[blue]📍 URL: {repo.html_url}[/blue]")
         console.print(f"[blue]🔗 Clone URL: {repo.clone_url}[/blue]")
 
@@ -311,37 +269,19 @@ async def create_repo(
 @handle_exceptions  # type: ignore[misc]
 async def update_repo(
     repo_name: str = typer.Argument(help="Repository name (owner/repo format)"),
-    description: str | None = typer.Option(
-        None, "--description", "-d", help="Update description"
-    ),
+    description: str | None = typer.Option(None, "--description", "-d", help="Update description"),
     homepage: str | None = typer.Option(None, "--homepage", help="Update homepage URL"),
-    private: bool | None = typer.Option(
-        None, "--private/--public", help="Change visibility"
-    ),
-    has_issues: bool | None = typer.Option(
-        None, "--issues/--no-issues", help="Enable/disable issues"
-    ),
-    has_wiki: bool | None = typer.Option(
-        None, "--wiki/--no-wiki", help="Enable/disable wiki"
-    ),
-    has_projects: bool | None = typer.Option(
-        None, "--projects/--no-projects", help="Enable/disable projects"
-    ),
-    allow_squash_merge: bool | None = typer.Option(
-        None, "--squash/--no-squash", help="Allow squash merge"
-    ),
-    allow_merge_commit: bool | None = typer.Option(
-        None, "--merge/--no-merge", help="Allow merge commit"
-    ),
-    allow_rebase_merge: bool | None = typer.Option(
-        None, "--rebase/--no-rebase", help="Allow rebase merge"
-    ),
+    private: bool | None = typer.Option(None, "--private/--public", help="Change visibility"),
+    has_issues: bool | None = typer.Option(None, "--issues/--no-issues", help="Enable/disable issues"),
+    has_wiki: bool | None = typer.Option(None, "--wiki/--no-wiki", help="Enable/disable wiki"),
+    has_projects: bool | None = typer.Option(None, "--projects/--no-projects", help="Enable/disable projects"),
+    allow_squash_merge: bool | None = typer.Option(None, "--squash/--no-squash", help="Allow squash merge"),
+    allow_merge_commit: bool | None = typer.Option(None, "--merge/--no-merge", help="Allow merge commit"),
+    allow_rebase_merge: bool | None = typer.Option(None, "--rebase/--no-rebase", help="Allow rebase merge"),
     delete_branch_on_merge: bool | None = typer.Option(
         None, "--delete-branch/--keep-branch", help="Delete branch on merge"
     ),
-    archived: bool | None = typer.Option(
-        None, "--archive/--unarchive", help="Archive repository"
-    ),
+    archived: bool | None = typer.Option(None, "--archive/--unarchive", help="Archive repository"),
 ) -> None:
     """Update repository settings."""
     if "/" not in repo_name:
@@ -384,10 +324,7 @@ async def update_repo(
 
         updated_repo = await client.update_repo(owner, repo, update_data)
 
-        console.print(
-            f"[green]✅ Repository '{updated_repo.full_name}' "
-            "updated successfully![/green]"
-        )
+        console.print(f"[green]✅ Repository '{updated_repo.full_name}' updated successfully![/green]")
         console.print(f"[blue]📍 URL: {updated_repo.html_url}[/blue]")
 
     finally:
@@ -410,9 +347,7 @@ async def delete_repo(
 
     # Confirmation
     if not force:
-        console.print(
-            f"[red]⚠️  This will permanently delete the repository '{repo_name}'![/red]"
-        )
+        console.print(f"[red]⚠️  This will permanently delete the repository '{repo_name}'![/red]")
         console.print("[red]This action cannot be undone![/red]")
 
         if not Confirm.ask("Are you sure you want to delete this repository?"):
@@ -420,21 +355,15 @@ async def delete_repo(
             return
 
         # Double confirmation for safety
-        confirmation_text = Prompt.ask(
-            f"Type the repository name '{repo_name}' to confirm deletion"
-        )
+        confirmation_text = Prompt.ask(f"Type the repository name '{repo_name}' to confirm deletion")
         if confirmation_text != repo_name:
-            console.print(
-                "[red]Repository name doesn't match. Deletion cancelled.[/red]"
-            )
+            console.print("[red]Repository name doesn't match. Deletion cancelled.[/red]")
             return
 
     client = GitHubClient(token=config.github_token)
     try:
         await client.delete_repo(owner, repo)
-        console.print(
-            f"[green]✅ Repository '{repo_name}' deleted successfully[/green]"
-        )
+        console.print(f"[green]✅ Repository '{repo_name}' deleted successfully[/green]")
 
     finally:
         await client.close()
@@ -462,9 +391,7 @@ async def fork_repo(
 
         forked_repo = await client.fork_repo(owner, repo, fork_data)
 
-        console.print(
-            f"[green]✅ Repository '{repo_name}' forked successfully![/green]"
-        )
+        console.print(f"[green]✅ Repository '{repo_name}' forked successfully![/green]")
         console.print(f"[blue]📍 Fork URL: {forked_repo.html_url}[/blue]")
         console.print(f"[blue]🔗 Clone URL: {forked_repo.clone_url}[/blue]")
 

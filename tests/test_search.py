@@ -107,9 +107,7 @@ class TestSearchCLI:
 
         for sort_option in sort_options:
             runner = CliRunner()
-            result = runner.invoke(
-                app, ["search", "repos", "python", "--sort", sort_option]
-            )
+            result = runner.invoke(app, ["search", "repos", "python", "--sort", sort_option])
 
             assert result.exit_code == 0
 
@@ -132,9 +130,7 @@ class TestSearchCLI:
 
         for order_option in order_options:
             runner = CliRunner()
-            result = runner.invoke(
-                app, ["search", "repos", "python", "--order", order_option]
-            )
+            result = runner.invoke(app, ["search", "repos", "python", "--order", order_option])
 
             assert result.exit_code == 0
 
@@ -153,9 +149,7 @@ class TestSearchCLI:
     def test_search_repos_with_output_file(self, mock_asyncio_run):
         """Test repository search with output file."""
         runner = CliRunner()
-        result = runner.invoke(
-            app, ["search", "repos", "python", "--output", "repos.json"]
-        )
+        result = runner.invoke(app, ["search", "repos", "python", "--output", "repos.json"])
 
         assert result.exit_code == 0
         mock_asyncio_run.assert_called_once()
@@ -239,9 +233,7 @@ class TestSearchCLI:
 
         for sort_option in sort_options:
             runner = CliRunner()
-            result = runner.invoke(
-                app, ["search", "users", "john", "--sort", sort_option]
-            )
+            result = runner.invoke(app, ["search", "users", "john", "--sort", sort_option])
 
             assert result.exit_code == 0
 
@@ -264,9 +256,7 @@ class TestSearchCLI:
 
         for order_option in order_options:
             runner = CliRunner()
-            result = runner.invoke(
-                app, ["search", "users", "john", "--order", order_option]
-            )
+            result = runner.invoke(app, ["search", "users", "john", "--order", order_option])
 
             assert result.exit_code == 0
 
@@ -285,9 +275,7 @@ class TestSearchCLI:
     def test_search_users_with_output_file(self, mock_asyncio_run):
         """Test user search with output file."""
         runner = CliRunner()
-        result = runner.invoke(
-            app, ["search", "users", "john", "--output", "users.json"]
-        )
+        result = runner.invoke(app, ["search", "users", "john", "--output", "users.json"])
 
         assert result.exit_code == 0
         mock_asyncio_run.assert_called_once()
@@ -353,9 +341,7 @@ class TestSearchCLI:
     def test_search_repos_invalid_format(self):
         """Test repository search with invalid format option."""
         runner = CliRunner()
-        result = runner.invoke(
-            app, ["search", "repos", "python", "--format", "invalid"]
-        )
+        result = runner.invoke(app, ["search", "repos", "python", "--format", "invalid"])
 
         # Should exit with error due to invalid choice
         assert result.exit_code != 0
@@ -413,9 +399,7 @@ class TestSearchCLI:
     def test_search_complex_query_users(self, mock_asyncio_run):
         """Test user search with complex query."""
         runner = CliRunner()
-        result = runner.invoke(
-            app, ["search", "users", "location:London followers:>100"]
-        )
+        result = runner.invoke(app, ["search", "users", "location:London followers:>100"])
 
         assert result.exit_code == 0
         mock_asyncio_run.assert_called_once()

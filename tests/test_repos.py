@@ -116,9 +116,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_list_basic(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_list_basic(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test basic repository listing."""
         # Setup mocks
         mock_config = Mock()
@@ -139,9 +137,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_list_with_username(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_list_with_username(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test repository listing with username."""
         # Setup mocks
         mock_config = Mock()
@@ -162,9 +158,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_list_with_options(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_list_with_options(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test repository listing with various options."""
         # Setup mocks
         mock_config = Mock()
@@ -200,9 +194,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_list_empty_result(
-        self, mock_client_class, mock_config_manager, runner
-    ):
+    def test_repos_list_empty_result(self, mock_client_class, mock_config_manager, runner):
         """Test repository listing with empty result."""
         # Setup mocks
         mock_config = Mock()
@@ -223,9 +215,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_list_pagination(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_list_pagination(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test repository listing with pagination."""
         # Setup mocks
         mock_config = Mock()
@@ -264,9 +254,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_info_basic(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_info_basic(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test basic repository info."""
         # Setup mocks
         mock_config = Mock()
@@ -321,9 +309,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_issues_basic(
-        self, mock_client_class, mock_config_manager, runner, mock_issue
-    ):
+    def test_repos_issues_basic(self, mock_client_class, mock_config_manager, runner, mock_issue):
         """Test basic repository issues listing."""
         # Setup mocks
         mock_config = Mock()
@@ -344,9 +330,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_issues_with_options(
-        self, mock_client_class, mock_config_manager, runner, mock_issue
-    ):
+    def test_repos_issues_with_options(self, mock_client_class, mock_config_manager, runner, mock_issue):
         """Test repository issues with various options."""
         # Setup mocks
         mock_config = Mock()
@@ -384,9 +368,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_issues_empty_result(
-        self, mock_client_class, mock_config_manager, runner
-    ):
+    def test_repos_issues_empty_result(self, mock_client_class, mock_config_manager, runner):
         """Test repository issues with empty result."""
         # Setup mocks
         mock_config = Mock()
@@ -407,9 +389,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_issues_pagination(
-        self, mock_client_class, mock_config_manager, runner, mock_issue
-    ):
+    def test_repos_issues_pagination(self, mock_client_class, mock_config_manager, runner, mock_issue):
         """Test repository issues with pagination."""
         # Setup mocks
         mock_config = Mock()
@@ -427,9 +407,7 @@ class TestReposCommands:
         mock_client.close = AsyncMock()
         mock_client_class.return_value = mock_client
 
-        result = runner.invoke(
-            app, ["repos", "issues", "testuser/test-repo", "--limit", "130"]
-        )
+        result = runner.invoke(app, ["repos", "issues", "testuser/test-repo", "--limit", "130"])
 
         assert result.exit_code == 0
         assert mock_client.get_repo_issues.call_count == 2
@@ -444,9 +422,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_create_basic(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_create_basic(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test basic repository creation."""
         # Setup mocks
         mock_config = Mock()
@@ -468,9 +444,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_create_with_options(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_create_with_options(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test repository creation with various options."""
         # Setup mocks
         mock_config = Mock()
@@ -534,9 +508,7 @@ class TestReposCommands:
         # private, issues, wiki, projects, auto_init
         mock_confirm.side_effect = [False, True, True, True, True]
 
-        result = runner.invoke(
-            app, ["repos", "create", "initial-name", "--interactive"]
-        )
+        result = runner.invoke(app, ["repos", "create", "initial-name", "--interactive"])
 
         assert result.exit_code == 0
         mock_client.create_repo.assert_called_once()
@@ -557,9 +529,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_update_no_changes(
-        self, mock_client_class, mock_config_manager, runner
-    ):
+    def test_repos_update_no_changes(self, mock_client_class, mock_config_manager, runner):
         """Test repository update with no changes specified."""
         # Setup mocks
         mock_config = Mock()
@@ -579,9 +549,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_update_basic(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_update_basic(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test basic repository update."""
         # Setup mocks
         mock_config = Mock()
@@ -612,9 +580,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_update_all_options(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_update_all_options(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test repository update with all options."""
         # Setup mocks
         mock_config = Mock()
@@ -679,9 +645,7 @@ class TestReposCommands:
         mock_client.close = AsyncMock()
         mock_client_class.return_value = mock_client
 
-        result = runner.invoke(
-            app, ["repos", "delete", "testuser/test-repo", "--force"]
-        )
+        result = runner.invoke(app, ["repos", "delete", "testuser/test-repo", "--force"])
 
         assert result.exit_code == 0
         assert "Repository 'testuser/test-repo' deleted successfully" in result.stdout
@@ -727,9 +691,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_delete_cancelled(
-        self, mock_client_class, mock_config_manager, mock_confirm, runner
-    ):
+    def test_repos_delete_cancelled(self, mock_client_class, mock_config_manager, mock_confirm, runner):
         """Test repository deletion cancelled by user."""
         # Setup mocks
         mock_config = Mock()
@@ -799,9 +761,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_fork_basic(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_fork_basic(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test basic repository forking."""
         # Setup mocks
         mock_config = Mock()
@@ -823,9 +783,7 @@ class TestReposCommands:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_repos_fork_to_organization(
-        self, mock_client_class, mock_config_manager, runner, mock_repo
-    ):
+    def test_repos_fork_to_organization(self, mock_client_class, mock_config_manager, runner, mock_repo):
         """Test repository forking to organization."""
         # Setup mocks
         mock_config = Mock()
@@ -837,9 +795,7 @@ class TestReposCommands:
         mock_client.close = AsyncMock()
         mock_client_class.return_value = mock_client
 
-        result = runner.invoke(
-            app, ["repos", "fork", "testuser/test-repo", "--org", "myorg"]
-        )
+        result = runner.invoke(app, ["repos", "fork", "testuser/test-repo", "--org", "myorg"])
 
         assert result.exit_code == 0
         mock_client.fork_repo.assert_called_once()
@@ -857,9 +813,7 @@ class TestReposExceptionHandling:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_authentication_error_handling(
-        self, mock_client_class, mock_config_manager, runner
-    ):
+    def test_authentication_error_handling(self, mock_client_class, mock_config_manager, runner):
         """Test handling of authentication errors."""
         # Setup mocks
         mock_config = Mock()
@@ -867,9 +821,7 @@ class TestReposExceptionHandling:
         mock_config_manager.get_config.return_value = mock_config
 
         mock_client = AsyncMock()
-        mock_client.get_user_repos = AsyncMock(
-            side_effect=AuthenticationError("Invalid token")
-        )
+        mock_client.get_user_repos = AsyncMock(side_effect=AuthenticationError("Invalid token"))
         mock_client.close = AsyncMock()
         mock_client_class.return_value = mock_client
 
@@ -890,9 +842,7 @@ class TestReposExceptionHandling:
         mock_config_manager.get_config.return_value = mock_config
 
         mock_client = AsyncMock()
-        mock_client.get_user_repos = AsyncMock(
-            side_effect=APIError("API rate limit exceeded")
-        )
+        mock_client.get_user_repos = AsyncMock(side_effect=APIError("API rate limit exceeded"))
         mock_client.close = AsyncMock()
         mock_client_class.return_value = mock_client
 
@@ -904,9 +854,7 @@ class TestReposExceptionHandling:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_mygh_exception_handling(
-        self, mock_client_class, mock_config_manager, runner
-    ):
+    def test_mygh_exception_handling(self, mock_client_class, mock_config_manager, runner):
         """Test handling of MyGH exceptions."""
         # Setup mocks
         mock_config = Mock()
@@ -914,9 +862,7 @@ class TestReposExceptionHandling:
         mock_config_manager.get_config.return_value = mock_config
 
         mock_client = AsyncMock()
-        mock_client.get_user_repos = AsyncMock(
-            side_effect=MyGHException("Custom error")
-        )
+        mock_client.get_user_repos = AsyncMock(side_effect=MyGHException("Custom error"))
         mock_client.close = AsyncMock()
         mock_client_class.return_value = mock_client
 
@@ -928,9 +874,7 @@ class TestReposExceptionHandling:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_keyboard_interrupt_handling(
-        self, mock_client_class, mock_config_manager, runner
-    ):
+    def test_keyboard_interrupt_handling(self, mock_client_class, mock_config_manager, runner):
         """Test handling of keyboard interrupts."""
         # Setup mocks
         mock_config = Mock()
@@ -950,9 +894,7 @@ class TestReposExceptionHandling:
     @patch("mygh.cli.repos.config_manager")
     @patch("mygh.cli.repos.GitHubClient")
     @pytest.mark.api_mock
-    def test_unexpected_exception_handling(
-        self, mock_client_class, mock_config_manager, runner
-    ):
+    def test_unexpected_exception_handling(self, mock_client_class, mock_config_manager, runner):
         """Test handling of unexpected exceptions."""
         # Setup mocks
         mock_config = Mock()
@@ -960,9 +902,7 @@ class TestReposExceptionHandling:
         mock_config_manager.get_config.return_value = mock_config
 
         mock_client = AsyncMock()
-        mock_client.get_user_repos = AsyncMock(
-            side_effect=ValueError("Unexpected error")
-        )
+        mock_client.get_user_repos = AsyncMock(side_effect=ValueError("Unexpected error"))
         mock_client.close = AsyncMock()
         mock_client_class.return_value = mock_client
 

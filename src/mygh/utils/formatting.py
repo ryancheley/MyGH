@@ -326,10 +326,7 @@ def format_csv_repos(repos: list[GitHubRepo]) -> str:
 
 def format_csv_starred_repos(repos: list[GitHubRepo]) -> str:
     """Format starred repositories as CSV with owner information."""
-    lines = [
-        "owner,name,full_name,description,language,stars,"
-        "days_since_last_commit,pushed_at,html_url"
-    ]
+    lines = ["owner,name,full_name,description,language,stars,days_since_last_commit,pushed_at,html_url"]
 
     for repo in repos:
         description = (repo.description or "").replace('"', '""').replace("\n", " ")
@@ -361,12 +358,7 @@ def print_output(
     """
     if format_type == "json":
         output = format_json(data)
-    elif (
-        format_type == "csv"
-        and isinstance(data, list)
-        and data
-        and isinstance(data[0], GitHubRepo)
-    ):
+    elif format_type == "csv" and isinstance(data, list) and data and isinstance(data[0], GitHubRepo):
         if is_starred:
             output = format_csv_starred_repos(data)
         else:
@@ -395,9 +387,7 @@ def print_output(
                 return
 
             if output_file:
-                console.print(
-                    "Table format cannot be saved to file. Use --format json or csv."
-                )
+                console.print("Table format cannot be saved to file. Use --format json or csv.")
                 return
 
             console.print(table)

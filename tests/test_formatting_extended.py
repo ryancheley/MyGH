@@ -105,10 +105,7 @@ class TestTableFormatting:
             private=False,
             owner=sample_user,
             html_url="https://github.com/testuser/test-repo",
-            description=(
-                "A test repository with a very long description that should be "
-                "truncated"
-            ),
+            description=("A test repository with a very long description that should be truncated"),
             fork=False,
             url="https://api.github.com/repos/testuser/test-repo",
             created_at=datetime(2023, 1, 1, tzinfo=timezone.utc),
@@ -179,10 +176,7 @@ class TestTableFormatting:
         return GitHubPullRequest(
             id=1,
             number=1,
-            title=(
-                "Add feature that has a very long title that should be truncated "
-                "for display"
-            ),
+            title=("Add feature that has a very long title that should be truncated for display"),
             user=sample_user,
             state="open",
             head=GitHubBranch(
@@ -206,9 +200,7 @@ class TestTableFormatting:
             patch_url="https://github.com/testuser/test-repo/pull/1.patch",
         )
 
-    def test_format_starred_repo_table_description_truncation(
-        self, sample_repo_for_starred
-    ):
+    def test_format_starred_repo_table_description_truncation(self, sample_repo_for_starred):
         """Test starred repo table with description truncation."""
         repos = [sample_repo_for_starred]
         table = format_starred_repo_table(repos)
@@ -232,9 +224,7 @@ class TestTableFormatting:
         assert isinstance(table, Table)
         assert table.title == "GitHub Pull Requests"
 
-    def test_format_pull_request_table_closed_state(
-        self, sample_pull_request, sample_user, sample_repo_for_starred
-    ):
+    def test_format_pull_request_table_closed_state(self, sample_pull_request, sample_user, sample_repo_for_starred):
         """Test pull request table with closed state."""
         closed_pr = GitHubPullRequest(
             id=2,
@@ -279,8 +269,7 @@ class TestTableFormatting:
             owner=sample_user,
             html_url="https://github.com/testuser/test-repo",
             description=(
-                "This is a very long description that definitely exceeds 47 characters "
-                "and should be truncated"
+                "This is a very long description that definitely exceeds 47 characters and should be truncated"
             ),
             fork=False,
             url="https://api.github.com/repos/testuser/test-repo",

@@ -116,9 +116,7 @@ class TestSearchExecution:
             "items": [sample_repo_data],
         }
 
-        respx.get("https://api.github.com/search/repositories").mock(
-            return_value=httpx.Response(200, json=search_data)
-        )
+        respx.get("https://api.github.com/search/repositories").mock(return_value=httpx.Response(200, json=search_data))
 
         with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
             result = runner.invoke(search_app, ["repos", "python", "--format", "table"])
@@ -138,9 +136,7 @@ class TestSearchExecution:
             "items": [sample_repo_data],
         }
 
-        respx.get("https://api.github.com/search/repositories").mock(
-            return_value=httpx.Response(200, json=search_data)
-        )
+        respx.get("https://api.github.com/search/repositories").mock(return_value=httpx.Response(200, json=search_data))
 
         with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
             result = runner.invoke(search_app, ["repos", "python", "--format", "json"])
@@ -159,9 +155,7 @@ class TestSearchExecution:
             "items": [sample_repo_data],
         }
 
-        respx.get("https://api.github.com/search/repositories").mock(
-            return_value=httpx.Response(200, json=search_data)
-        )
+        respx.get("https://api.github.com/search/repositories").mock(return_value=httpx.Response(200, json=search_data))
 
         with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as f:
             output_file = f.name
@@ -199,9 +193,7 @@ class TestSearchExecution:
             "items": [sample_user_data],
         }
 
-        respx.get("https://api.github.com/search/users").mock(
-            return_value=httpx.Response(200, json=search_data)
-        )
+        respx.get("https://api.github.com/search/users").mock(return_value=httpx.Response(200, json=search_data))
 
         with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
             result = runner.invoke(search_app, ["users", "john", "--format", "table"])
@@ -221,9 +213,7 @@ class TestSearchExecution:
             "items": [sample_user_data],
         }
 
-        respx.get("https://api.github.com/search/users").mock(
-            return_value=httpx.Response(200, json=search_data)
-        )
+        respx.get("https://api.github.com/search/users").mock(return_value=httpx.Response(200, json=search_data))
 
         with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
             result = runner.invoke(search_app, ["users", "john", "--format", "json"])
@@ -242,9 +232,7 @@ class TestSearchExecution:
             "items": [sample_user_data],
         }
 
-        respx.get("https://api.github.com/search/users").mock(
-            return_value=httpx.Response(200, json=search_data)
-        )
+        respx.get("https://api.github.com/search/users").mock(return_value=httpx.Response(200, json=search_data))
 
         with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as f:
             output_file = f.name
@@ -279,9 +267,7 @@ class TestSearchExecution:
             mock_client = AsyncMock()
             mock_client.__aenter__.return_value = mock_client
             mock_client.__aexit__.return_value = None
-            mock_client.search_repositories.side_effect = AuthenticationError(
-                "Invalid token"
-            )
+            mock_client.search_repositories.side_effect = AuthenticationError("Invalid token")
             mock_client_class.return_value = mock_client
 
             result = runner.invoke(search_app, ["repos", "python"])
@@ -531,9 +517,7 @@ class TestSearchExecution:
         """Test format validation during execution."""
         # Test invalid format for repos
         with patch.dict("os.environ", {"GITHUB_TOKEN": "test_token"}):
-            result = runner.invoke(
-                search_app, ["repos", "python", "--format", "invalid"]
-            )
+            result = runner.invoke(search_app, ["repos", "python", "--format", "invalid"])
 
         assert result.exit_code == 1
         assert "Invalid format: invalid" in result.stdout
