@@ -387,6 +387,7 @@ default_per_page = 50
             # Verify that the module still works with tomli fallback
             manager = mygh.utils.config.ConfigManager()
             # Create a fake config file to trigger the tomli usage
+            manager.config_file.parent.mkdir(parents=True, exist_ok=True)
             manager.config_file.write_text('output-format = "json"')
             config = manager.load_config()
             assert isinstance(config, mygh.utils.config.Config)
