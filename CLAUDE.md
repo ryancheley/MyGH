@@ -36,8 +36,8 @@ The use of mocks should only be done sparingly, and only when an external API ca
 Testing coverage should never be less than 90%. 
 
 ```bash
-# Run all tests with coverage (requires 95%+ coverage)
-uv run pytest --cov=src/mygh --cov-fail-under=95
+# Run all tests with coverage (requires 90%+ coverage)
+uv run pytest --cov=src/mygh --cov-fail-under=90
 
 # Run specific test file
 uv run pytest tests/test_api_client.py

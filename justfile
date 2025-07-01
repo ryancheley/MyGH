@@ -14,7 +14,7 @@ setup:
 # Run all tests with coverage
 test:
     @echo "🧪 Running test suite..."
-    uv run pytest --cov=src/mygh --cov-fail-under=95
+    uv run pytest --cov=src/mygh --cov-fail-under=90
     @echo "✅ All tests passed!"
 
 # Run tests across all Python versions

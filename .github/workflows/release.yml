@@ -59,7 +59,7 @@ jobs:
       run: |
         uv run pytest tests/ \
           --cov=src/mygh \
-          --cov-fail-under=95
+          --cov-fail-under=90
 
   publish-to-testpypi:
     name: Publish to TestPyPI

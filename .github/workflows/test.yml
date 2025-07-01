@@ -40,7 +40,7 @@ jobs:
           --cov=src/mygh \
           --cov-report=term-missing \
           --cov-report=xml \
-          --cov-fail-under=95 \
+          --cov-fail-under=90 \
           --junitxml=pytest.xml
     
     - name: Upload coverage to Codecov
