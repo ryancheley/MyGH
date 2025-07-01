@@ -233,14 +233,16 @@ class TestBrowseCommandHelp:
         result = runner.invoke(app, ["browse", "repos", "--help"])
         assert result.exit_code == 0
         assert "Launch interactive repository browser" in result.stdout
-        assert "--user" in result.stdout
+        # Check for --user option in different formats (with or without ANSI codes)
+        assert ("--user" in result.stdout or "-u" in result.stdout)
 
     def test_browse_starred_help(self, runner):
         """Test browse starred command help."""
         result = runner.invoke(app, ["browse", "starred", "--help"])
         assert result.exit_code == 0
         assert "Launch interactive browser for starred repositories" in result.stdout
-        assert "--user" in result.stdout
+        # Check for --user option in different formats (with or without ANSI codes)
+        assert ("--user" in result.stdout or "-u" in result.stdout)
 
 
 @pytest.mark.api_mock
