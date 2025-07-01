@@ -160,4 +160,3 @@ class TestBrowseReposCoverage:
         assert result.exit_code == 0
         mock_client_class.return_value.__aenter__.assert_called_once()
         mock_client_class.return_value.__aexit__.assert_called_once()
-
