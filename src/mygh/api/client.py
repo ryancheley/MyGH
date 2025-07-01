@@ -372,6 +372,111 @@ class GitHubClient:
         except ValidationError as e:
             raise APIError(f"Invalid search result data: {e}") from e
 
+    async def get_authenticated_user(self) -> GitHubUser:
+        """Get authenticated user information.
+
+        Returns:
+            Authenticated user information
+        """
+        return await self.get_user()
+
+    async def star_repository(self, owner: str, repo: str) -> None:
+        """Star a repository.
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+        """
+        endpoint = f"/user/starred/{owner}/{repo}"
+        await self._request("PUT", endpoint)
+
+    async def unstar_repository(self, owner: str, repo: str) -> None:
+        """Unstar a repository.
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+        """
+        endpoint = f"/user/starred/{owner}/{repo}"
+        await self._request("DELETE", endpoint)
+
+    async def check_if_starred(self, owner: str, repo: str) -> bool:
+        """Check if authenticated user has starred a repository.
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+
+        Returns:
+            True if starred, False otherwise
+        """
+        endpoint = f"/user/starred/{owner}/{repo}"
+        try:
+            await self._request("GET", endpoint)
+            return True
+        except APIError as e:
+            if e.status_code == 404:
+                return False
+            raise
+
+    async def fork_repository(self, owner: str, repo: str) -> GitHubRepo:
+        """Fork a repository.
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+
+        Returns:
+            Forked repository information
+        """
+        endpoint = f"/repos/{owner}/{repo}/forks"
+        data = await self._request("POST", endpoint)
+
+        try:
+            return GitHubRepo(**data)
+        except ValidationError as e:
+            raise APIError(f"Invalid repository data: {e}") from e
+
+    async def watch_repository(self, owner: str, repo: str) -> None:
+        """Watch a repository.
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+        """
+        endpoint = f"/repos/{owner}/{repo}/subscription"
+        json_data = {"subscribed": True}
+        await self._request("PUT", endpoint, json_data=json_data)
+
+    async def unwatch_repository(self, owner: str, repo: str) -> None:
+        """Unwatch a repository.
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+        """
+        endpoint = f"/repos/{owner}/{repo}/subscription"
+        await self._request("DELETE", endpoint)
+
+    async def check_if_watching(self, owner: str, repo: str) -> bool:
+        """Check if authenticated user is watching a repository.
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+
+        Returns:
+            True if watching, False otherwise
+        """
+        endpoint = f"/repos/{owner}/{repo}/subscription"
+        try:
+            data = await self._request("GET", endpoint)
+            return data.get("subscribed", False)
+        except APIError as e:
+            if e.status_code == 404:
+                return False
+            raise
+
     async def close(self) -> None:
         """Close the HTTP client."""
         await self.client.aclose()

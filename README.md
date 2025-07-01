@@ -393,18 +393,28 @@ uv run mygh teams members myorg developers
 uv run mygh browse repos
 
 # Browse another user's repositories
-uv run mygh browse repos octocat
+uv run mygh browse repos --user octocat
+
+# Browse starred repositories only
+uv run mygh browse starred
+
+# Browse another user's starred repositories
+uv run mygh browse starred --user octocat
 ```
 
 **Browser Controls:**
-- `j/down`: Move down
-- `k/up`: Move up  
-- `n/next`: Next page
-- `p/prev`: Previous page
-- `f/filter`: Filter repositories
-- `c/clear`: Clear filter
-- `enter`: View repository details
-- `q/quit`: Exit browser
+- `Arrow keys`: Navigate through repositories
+- `Enter`: Perform selected action
+- `f`: Focus search input
+- `Escape`: Clear search
+- `r`: Refresh repository list
+- `q` or `Ctrl+C`: Quit browser
+
+**Features:**
+- Real-time search and filtering
+- Category filters (All, Starred, Owned, Forked, With Issues)
+- Repository details sidebar
+- Quick actions (star, fork, clone, open in browser)
 
 ### Configuration Management
 
@@ -462,10 +472,14 @@ mygh/
 │   ├── cli/               # CLI commands
 │   │   ├── main.py        # Main CLI entry point
 │   │   ├── user.py        # User-related commands
-│   │   └── repos.py       # Repository commands
+│   │   ├── repos.py       # Repository commands
+│   │   ├── browse.py      # Interactive browser commands
+│   │   └── search.py      # Advanced search commands
 │   ├── api/               # GitHub API integration
 │   │   ├── client.py      # HTTP client
 │   │   └── models.py      # Pydantic models
+│   ├── tui/               # Terminal User Interface
+│   │   └── browser.py     # Interactive repository browser
 │   ├── utils/             # Utilities
 │   │   ├── config.py      # Configuration management
 │   │   └── formatting.py  # Output formatting

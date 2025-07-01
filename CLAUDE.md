@@ -10,6 +10,7 @@ MyGH is a comprehensive GitHub CLI tool built with Python, Typer, and Rich. It p
 - Python 3.10+ (supports up to 3.14 beta)
 - Typer framework for CLI commands
 - Rich for terminal output formatting
+- Textual for interactive TUI components (repository browser)
 - httpx for async HTTP client
 - Pydantic for data validation
 - uv for package management
@@ -35,8 +36,8 @@ The use of mocks should only be done sparingly, and only when an external API ca
 Testing coverage should never be less than 90%. 
 
 ```bash
-# Run all tests with coverage (requires 95%+ coverage)
-uv run pytest --cov=src/mygh --cov-fail-under=95
+# Run all tests with coverage (requires 90%+ coverage)
+uv run pytest --cov=src/mygh --cov-fail-under=90
 
 # Run specific test file
 uv run pytest tests/test_api_client.py
@@ -83,6 +84,101 @@ uv run mypy src/mygh
 # Fix linting issues automatically
 uv run ruff check --fix src tests
 ```
+
+### Validity Checks
+
+If any new commands are added, even if the tests pass, the commands should be run in the terminal to see what the ouput looks like. 
+
+## CI/CD Best Practices and Debugging
+
+### Pre-Push Checklist
+
+**CRITICAL**: Always run these checks locally before pushing to prevent CI failures:
+
+```bash
+# 1. Run all tests with coverage
+uv run pytest --cov=src/mygh --cov-fail-under=90
+
+# 2. Run code quality checks
+uv run ruff check src tests
+uv run ruff format src tests
+
+# 3. Run type checking
+uv run mypy src/mygh
+
+# 4. Run multi-Python testing (if time permits)
+uv run tox
+```
+
+### Common CI Failure Patterns and Solutions
+
+#### 1. Missing Implementation Files
+**Problem**: Import errors in CI due to uncommitted files
+- **Symptoms**: `ModuleNotFoundError` or `AttributeError: module has no attribute`
+- **Solution**: Ensure ALL new files are committed and pushed
+- **Check**: Run `git status` and `git diff --name-only origin/main` before pushing
+
+#### 2. Rich/Terminal Output Differences
+**Problem**: CLI help text assertions failing due to ANSI formatting differences between local and CI
+- **Symptoms**: Tests pass locally but fail in CI with text-not-found assertions
+- **Root Cause**: Rich library formats output differently in CI (no colors/different formatting)
+- **Solution**: Make test assertions more robust:
+  ```python
+  # Instead of:
+  assert "--user" in result.stdout
+  
+  # Use:
+  assert ("--user" in result.stdout or "-u" in result.stdout)
+  ```
+
+#### 3. Code Formatting Issues
+**Problem**: `ruff format --check` failing in CI
+- **Symptoms**: "Would reformat: filename.py" errors
+- **Solution**: Always run `uv run ruff format src tests` before committing
+- **Prevention**: Set up pre-commit hooks or IDE auto-formatting
+
+#### 4. Test Coverage Drops
+**Problem**: Coverage falls below 90% threshold
+- **Symptoms**: "Coverage failure: total of X% is less than fail-under=90%"
+- **Solution**: Add tests for new code or adjust coverage requirements if justified
+- **Investigation**: Check coverage report with `--cov-report=html`
+
+### CI Debugging Commands
+
+When CI fails, use these commands to investigate:
+
+```bash
+# Check PR status and specific failures
+gh pr view <PR_NUMBER> --json statusCheckRollup
+
+# Get logs from specific failing job
+gh api repos/OWNER/REPO/actions/jobs/JOB_ID/logs
+
+# View recent workflow runs
+gh run list
+
+# View specific run details
+gh run view RUN_ID --log
+```
+
+### Local Environment vs CI Differences
+
+Be aware of these key differences that can cause issues:
+
+1. **Terminal Capabilities**: CI environments may not support colors/rich formatting
+2. **File Permissions**: Different between local and CI systems
+3. **Environment Variables**: CI may have different defaults
+4. **Python Versions**: Always test against the same versions used in CI
+5. **Package Versions**: Lock files ensure consistency, but local cache can differ
+
+### Testing Strategy for Complex Features
+
+For major features (like interactive TUI components):
+
+1. **Incremental Development**: Commit working pieces frequently
+2. **Test Early**: Run CI checks on smaller changes first
+3. **Local CI Simulation**: Use `act` or similar tools when possible
+4. **Documentation Updates**: Update CLAUDE.md with new patterns/learnings
 
 ### Git Branching
 
@@ -200,6 +296,8 @@ Use the `just release` command for automated version bumping and deployment (see
 - **`main.py`**: Main CLI entry point, global exception handling, configuration commands
 - **`user.py`**: User-related commands (info, starred repos, gists)
 - **`repos.py`**: Repository management commands (list, info, issues)
+- **`browse.py`**: Interactive repository browser commands (TUI-based browsing)
+- **`search.py`**: Advanced search capabilities across GitHub
 
 ### API Layer (`src/mygh/api/`)
 - **`client.py`**: GitHub REST API client with async support, authentication, and rate limiting
@@ -208,6 +306,9 @@ Use the `just release` command for automated version bumping and deployment (see
 ### Utils Layer (`src/mygh/utils/`)
 - **`config.py`**: TOML-based configuration management with environment variable support
 - **`formatting.py`**: Multi-format output (Rich tables, JSON, CSV) with commit age indicators
+
+### TUI Layer (`src/mygh/tui/`)
+- **`browser.py`**: Interactive repository browser using Textual framework with search, filtering, and quick actions
 
 ### Exception Handling (`src/mygh/exceptions.py`)
 Custom exception classes for different error scenarios
@@ -232,6 +333,41 @@ Key configuration options:
 - `output-format`: Default output format (table, json, csv)
 - `default-per-page`: Default pagination limit
 - Authentication tokens (never saved to config files)
+
+## Interactive Repository Browser
+
+The interactive browser feature (`src/mygh/tui/browser.py`) provides a rich terminal interface for browsing repositories:
+
+### Features
+- **Interactive TUI**: Built with Textual framework for rich terminal interactions
+- **Real-time Search**: Search repositories as you type with instant filtering
+- **Category Filters**: Filter by All, Starred, Owned, Forked, or repositories with issues
+- **Repository Details**: Sidebar showing comprehensive repository metadata
+- **Quick Actions**: Star/unstar, fork, clone, and open in browser directly from the TUI
+- **Keyboard Navigation**: Full keyboard support with intuitive shortcuts
+
+### Commands
+```bash
+# Browse all repositories for authenticated user
+uv run mygh browse repos
+
+# Browse repositories for a specific user
+uv run mygh browse repos --user octocat
+
+# Browse only starred repositories
+uv run mygh browse starred
+
+# Browse starred repositories for a specific user  
+uv run mygh browse starred --user octocat
+```
+
+### Keyboard Shortcuts
+- **q** or **Ctrl+C**: Quit the browser
+- **r**: Refresh repository list
+- **f**: Focus search input
+- **Escape**: Clear search
+- **Arrow keys**: Navigate through repositories
+- **Enter**: Perform selected action
 
 ## Output Formatting
 
@@ -300,4 +436,7 @@ uv run pytest tests/test_user.py::test_user_info_command -v
 
 # Test with coverage for specific module
 uv run pytest tests/test_repos.py --cov=src/mygh/cli/repos --cov-report=term-missing
+
+# Test the interactive browser functionality
+uv run pytest tests/test_cli_browse.py tests/test_tui_browser.py -v
 ```

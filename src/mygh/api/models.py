@@ -6,6 +6,17 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 
+class GitHubLicense(BaseModel):
+    """GitHub license model."""
+
+    key: str
+    name: str
+    spdx_id: str | None = Field(alias="spdx_id", default=None)
+    url: str | None = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 class GitHubUser(BaseModel):
     """GitHub user model."""
 
@@ -45,13 +56,16 @@ class GitHubRepo(BaseModel):
     open_issues_count: int = Field(alias="open_issues_count")
     size: int
     default_branch: str = Field(alias="default_branch")
+    homepage: str | None = None
     created_at: datetime = Field(alias="created_at")
     updated_at: datetime = Field(alias="updated_at")
     pushed_at: datetime | None = Field(alias="pushed_at", default=None)
     html_url: str = Field(alias="html_url")
     clone_url: str = Field(alias="clone_url")
     ssh_url: str = Field(alias="ssh_url")
+    license: GitHubLicense | None = None
     owner: GitHubUser
+    starred: bool = False  # Added by the application for UI state
 
     model_config = ConfigDict(populate_by_name=True)
 

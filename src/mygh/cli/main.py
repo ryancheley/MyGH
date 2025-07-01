@@ -8,6 +8,7 @@ from rich.console import Console
 from .. import __version__
 from ..exceptions import APIError, AuthenticationError, MyGHException
 from ..utils.config import ConfigManager
+from .browse import browse_app
 from .repos import repos_app
 from .search import search_app
 from .user import user_app
@@ -48,6 +49,7 @@ def main(
 app.add_typer(user_app, name="user", help="User-related commands")
 app.add_typer(repos_app, name="repos", help="Repository management commands")
 app.add_typer(search_app, name="search", help="Advanced search capabilities")
+app.add_typer(browse_app, name="browse", help="Interactive repository browser")
 
 # Global configuration manager
 config_manager = ConfigManager()

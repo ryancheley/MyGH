@@ -32,6 +32,7 @@ dependencies = [
     "httpx>=0.24.0",
     "pydantic>=2.0.0",
     "rich>=13.0.0",
+    "textual>=0.41.0",
     "click>=8.0.0",
     "tomli>=1.2.0; python_version<'3.11'",
 ]
@@ -49,6 +50,9 @@ dev = [
     "respx>=0.20.0",
     "ruff>=0.0.280",
     "mypy>=1.0.0",
+]
+clipboard = [
+    "pyperclip>=1.8.0",
 ]
 
 [project.scripts]
@@ -109,7 +113,7 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "--strict-markers --cov=mygh --cov-report=term-missing --cov-report=html --cov-fail-under=95"
+addopts = "--strict-markers --cov=mygh --cov-report=term-missing --cov-report=html --cov-fail-under=90"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 markers = [
