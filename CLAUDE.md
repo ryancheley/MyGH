@@ -10,6 +10,7 @@ MyGH is a comprehensive GitHub CLI tool built with Python, Typer, and Rich. It p
 - Python 3.10+ (supports up to 3.14 beta)
 - Typer framework for CLI commands
 - Rich for terminal output formatting
+- Textual for interactive TUI components
 - httpx for async HTTP client
 - Pydantic for data validation
 - uv for package management
@@ -83,6 +84,10 @@ uv run mypy src/mygh
 # Fix linting issues automatically
 uv run ruff check --fix src tests
 ```
+
+### Validity Checks
+
+If any new commands are added, even if the tests pass, the commands should be run in the terminal to see what the ouput looks like. 
 
 ### Git Branching
 
@@ -200,6 +205,8 @@ Use the `just release` command for automated version bumping and deployment (see
 - **`main.py`**: Main CLI entry point, global exception handling, configuration commands
 - **`user.py`**: User-related commands (info, starred repos, gists)
 - **`repos.py`**: Repository management commands (list, info, issues)
+- **`browse.py`**: Interactive repository browser commands (TUI-based browsing)
+- **`search.py`**: Advanced search capabilities across GitHub
 
 ### API Layer (`src/mygh/api/`)
 - **`client.py`**: GitHub REST API client with async support, authentication, and rate limiting
@@ -208,6 +215,9 @@ Use the `just release` command for automated version bumping and deployment (see
 ### Utils Layer (`src/mygh/utils/`)
 - **`config.py`**: TOML-based configuration management with environment variable support
 - **`formatting.py`**: Multi-format output (Rich tables, JSON, CSV) with commit age indicators
+
+### TUI Layer (`src/mygh/tui/`)
+- **`browser.py`**: Interactive repository browser using Textual framework with search, filtering, and quick actions
 
 ### Exception Handling (`src/mygh/exceptions.py`)
 Custom exception classes for different error scenarios
@@ -232,6 +242,41 @@ Key configuration options:
 - `output-format`: Default output format (table, json, csv)
 - `default-per-page`: Default pagination limit
 - Authentication tokens (never saved to config files)
+
+## Interactive Repository Browser
+
+The interactive browser feature (`src/mygh/tui/browser.py`) provides a rich terminal interface for browsing repositories:
+
+### Features
+- **Interactive TUI**: Built with Textual framework for rich terminal interactions
+- **Real-time Search**: Search repositories as you type with instant filtering
+- **Category Filters**: Filter by All, Starred, Owned, Forked, or repositories with issues
+- **Repository Details**: Sidebar showing comprehensive repository metadata
+- **Quick Actions**: Star/unstar, fork, clone, and open in browser directly from the TUI
+- **Keyboard Navigation**: Full keyboard support with intuitive shortcuts
+
+### Commands
+```bash
+# Browse all repositories for authenticated user
+uv run mygh browse repos
+
+# Browse repositories for a specific user
+uv run mygh browse repos --user octocat
+
+# Browse only starred repositories
+uv run mygh browse starred
+
+# Browse starred repositories for a specific user  
+uv run mygh browse starred --user octocat
+```
+
+### Keyboard Shortcuts
+- **q** or **Ctrl+C**: Quit the browser
+- **r**: Refresh repository list
+- **f**: Focus search input
+- **Escape**: Clear search
+- **Arrow keys**: Navigate through repositories
+- **Enter**: Perform selected action
 
 ## Output Formatting
 
@@ -300,4 +345,7 @@ uv run pytest tests/test_user.py::test_user_info_command -v
 
 # Test with coverage for specific module
 uv run pytest tests/test_repos.py --cov=src/mygh/cli/repos --cov-report=term-missing
+
+# Test the interactive browser functionality
+uv run pytest tests/test_cli_browse.py tests/test_tui_browser.py -v
 ```
